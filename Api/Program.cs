@@ -85,6 +85,10 @@ builder.Services
             ValidIssuer = Secrets.JWT_ISSUER,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.JWT_SECRET)),
         };
+    }).AddGoogle(options =>
+    {
+        options.ClientId = Secrets.GOOGLE_CLIENT_ID;
+        options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
     });
 
 //builder.Services

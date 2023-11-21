@@ -1,11 +1,7 @@
 ﻿using Backend.Auth;
 using Data;
 using Lib;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using System.Security.Principal;
 
 namespace Api.Config;
 

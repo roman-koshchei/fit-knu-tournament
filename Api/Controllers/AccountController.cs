@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Backend.Auth;
+using Data;
 using Data.Tables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -21,12 +22,15 @@ public class AccountController : ControllerBase
     }
 
     // id will be removed and taken from token
-    public record EmailBody(string Id, string Email);
+    public record EmailBody(string Email);
 
     [HttpPut("email")]
+    [Authorize]
     public async Task<IActionResult> Email([FromBody] EmailBody body)
     {
-        var user = await db.Users.QueryOne(x => x.Id == body.Id);
+        var uid = User.Uid();
+
+        var user = await db.Users.QueryOne(x => x.Id == uid);
         if (user == null) return NotFound();
 
         user.Email = body.Email;

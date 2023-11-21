@@ -6,7 +6,7 @@ using System.Text;
 namespace Lib;
 
 /// <summary>Store secrets to create JWT token.</summary>
-public record JwtSecrets(string Issuer, string Audience, string Secret);
+public record JwtSecrets(string Issuer, string Secret);
 
 public class Jwt
 {

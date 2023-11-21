@@ -85,7 +85,8 @@ builder.Services
             ValidIssuer = Secrets.JWT_ISSUER,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.JWT_SECRET)),
         };
-    }).AddGoogle(options =>
+    })
+    .AddGoogle(options =>
     {
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
@@ -101,7 +102,7 @@ app.UseRouting();
 app.UseCors(options =>
 {
     options
-        .SetIsOriginAllowed(_ => true) // UseDomainCors handle it.
+        .SetIsOriginAllowed(_ => true)
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();

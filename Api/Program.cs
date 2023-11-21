@@ -87,16 +87,6 @@ builder.Services
         };
     });
 
-//builder.Services
-//    .AddAuthentication(options =>
-//    {
-//        options.DefaultAuthenticateScheme = RefreshOnly.Scheme;
-//        options.DefaultForbidScheme = RefreshOnly.Scheme;
-//        options.DefaultChallengeScheme = RefreshOnly.Scheme;
-//        options.DefaultScheme = RefreshOnly.Scheme;
-//    })
-//    .AddScheme<AuthenticationSchemeOptions, RefreshOnlyHandler>(RefreshOnly.Scheme, options => { });
-
 var app = builder.Build();
 
 app.UseSwagger();

@@ -1,6 +1,9 @@
 ﻿using Data;
+using Data.Tables;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -9,16 +12,18 @@ namespace Api.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly Db db;
+    private readonly UserManager<User> userManager;
 
-    public AccountController(Db db)
+    public AccountController(Db db, UserManager<User> userManager)
     {
         this.db = db;
+        this.userManager = userManager;
     }
 
     // id will be removed and taken from token
     public record EmailBody(string Id, string Email);
 
-    [HttpPatch("email")]
+    [HttpPut("email")]
     public async Task<IActionResult> Email([FromBody] EmailBody body)
     {
         var user = await db.Users.QueryOne(x => x.Id == body.Id);
@@ -35,9 +40,30 @@ public class AccountController : ControllerBase
 
     // PUT api/passwordChange
     // - Updating password
-    [HttpPatch("password")]
+    [HttpPut("password")]
     public async Task<IActionResult> Password([FromBody] PasswordBody body)
     {
-        return Ok();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var user = await userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        if (user.Id != userId)
+        {
+            return Forbid();
+        }
+
+        var result = await userManager.ChangePasswordAsync(user, body.OldPassword, body.NewPassword);
+
+        if (result.Succeeded)
+        {
+            return Ok("Password updated successfully");
+        }
+
+        return BadRequest(result.Errors);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Data.Tables;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,10 +17,10 @@ namespace Api.Controllers
     [Authorize] // Add the Authorize attribute at the controller level to restrict access to authenticated users
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -55,7 +56,7 @@ namespace Api.Controllers
                 return BadRequest("Username already exists");
             }
 
-            var newUser = new IdentityUser { UserName = model.UserName, Email = model.Email };
+            var newUser = new User { UserName = model.UserName, Email = model.Email };
             var result = await _userManager.CreateAsync(newUser, model.Password);
 
             if (result.Succeeded)
@@ -95,35 +96,6 @@ namespace Api.Controllers
             if (result.Succeeded)
             {
                 return Ok("Email updated successfully");
-            }
-
-            return BadRequest(result.Errors);
-        }
-
-        // PUT api/passwordChange
-        // - Updating password
-        [HttpPut("updatePassword")]
-        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordModel model)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            if (user.Id != userId)
-            {
-                return Forbid();
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-
-            if (result.Succeeded)
-            {
-                return Ok("Password updated successfully");
             }
 
             return BadRequest(result.Errors);
@@ -198,10 +170,4 @@ public class RegisterModel
 public class UpdateEmailModel
 {
     public string NewEmail { get; set; }
-}
-
-public class UpdatePasswordModel
-{
-    public string OldPassword { get; set; }
-    public string NewPassword { get; set; }
 }

@@ -1,6 +1,5 @@
 using Data;
 using Data.Tables;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

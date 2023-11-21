@@ -27,9 +27,9 @@ builder.Services.AddScoped<Jwt>(_ => new(jwtSecrets));
 
 builder.Services
         .AddIdentity<User, IdentityRole>()
-        .AddEntityFrameworkStores<Db>();
-//.AddDefaultTokenProviders()
-//.AddTokenProvider<DataProtectorTokenProvider<User>>("email");
+        .AddEntityFrameworkStores<Db>()
+        .AddDefaultTokenProviders()
+        .AddTokenProvider<DataProtectorTokenProvider<User>>("email");
 
 //builder.Services
 //    .AddAuthentication(options =>

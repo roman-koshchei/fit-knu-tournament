@@ -1,13 +1,12 @@
 ﻿using Data;
 using Data.Tables;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/account")]
 [ApiController]
 public class AccountController : ControllerBase
 {
@@ -30,6 +29,7 @@ public class AccountController : ControllerBase
         if (user == null) return NotFound();
 
         user.Email = body.Email;
+        user.NormalizedEmail = body.Email.ToUpper();
         user.Version += 1;
 
         var saved = await db.Save();
@@ -38,31 +38,14 @@ public class AccountController : ControllerBase
 
     public record PasswordBody(string Id, string OldPassword, string NewPassword);
 
-    // PUT api/passwordChange
-    // - Updating password
     [HttpPut("password")]
     public async Task<IActionResult> Password([FromBody] PasswordBody body)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var user = await userManager.FindByIdAsync(userId);
-
-        if (user == null)
-        {
-            return NotFound("User not found");
-        }
-
-        if (user.Id != userId)
-        {
-            return Forbid();
-        }
+        var user = await db.Users.QueryOne(x => x.Id == body.Id);
+        if (user == null) return NotFound();
 
         var result = await userManager.ChangePasswordAsync(user, body.OldPassword, body.NewPassword);
-
-        if (result.Succeeded)
-        {
-            return Ok("Password updated successfully");
-        }
+        if (result.Succeeded) return Ok();
 
         return BadRequest(result.Errors);
     }

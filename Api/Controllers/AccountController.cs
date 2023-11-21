@@ -1,5 +1,6 @@
 ﻿using Data;
 using Data.Tables;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -45,6 +46,21 @@ public class AccountController : ControllerBase
         if (user == null) return NotFound();
 
         var result = await userManager.ChangePasswordAsync(user, body.OldPassword, body.NewPassword);
+        if (result.Succeeded) return Ok();
+
+        return BadRequest(result.Errors);
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete()
+    {
+        //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = "test";
+
+        var user = await db.Users.QueryOne(x => x.Id == userId);
+        if (user == null) return NotFound();
+
+        var result = await userManager.DeleteAsync(user);
         if (result.Succeeded) return Ok();
 
         return BadRequest(result.Errors);

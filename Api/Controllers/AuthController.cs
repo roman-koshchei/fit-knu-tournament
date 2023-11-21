@@ -49,45 +49,13 @@ public class AuthController : ControllerBase
         }
 
         var newUser = new User { UserName = model.UserName, Email = model.Email };
+
         var result = await _userManager.CreateAsync(newUser, model.Password);
+        if (!result.Succeeded) return BadRequest(result.Errors);
 
-        if (result.Succeeded)
-        {
-            var token = jwt.Token(newUser.Id, newUser.Version);
+        var token = jwt.Token(newUser.Id, newUser.Version);
 
-            return Ok(new { Token = token });
-        }
-
-        return BadRequest(result.Errors);
-    }
-
-    // DELETE api/deleteUser ROMA KORINEVSKII
-    [HttpDelete("deleteUser")]
-    [Authorize]
-    public async Task<IActionResult> Delete()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
-        {
-            return NotFound("User not found");
-        }
-
-        if (user.Id != userId)
-        {
-            return Forbid();
-        }
-
-        var result = await _userManager.DeleteAsync(user);
-
-        if (result.Succeeded)
-        {
-            return Ok("User deleted successfully");
-        }
-
-        return BadRequest(result.Errors);
+        return Ok(new { Token = token });
     }
 }
 

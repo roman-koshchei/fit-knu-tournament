@@ -12,7 +12,7 @@ Change password: POST token + old password + new password + change user version 
 
 Change email: POST token + email + change user version + 1
 
-Delete user: DELET token + password
+Delete user: DELETE token + password
 
 Google: ?
 

@@ -1,9 +1,11 @@
+using Api.Config;
 using Data;
 using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+// Load env vars from .env
 Env.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +21,9 @@ builder.Services.AddSwaggerGen();
 // DB
 builder.Services.AddDbContext<Db>(options => options.UseNpgsql(Secrets.DB_CONNECTION_STRING));
 
-//JwtSecrets jwtSecrets = new(Secrets.JWT_ISSUER, Secrets.JWT_AUDIENCE, Secrets.JWT_SECRET);
-//builder.Services.AddScoped<Jwt>(_ => new(jwtSecrets));
+// JWT
+JwtSecrets jwtSecrets = new(Secrets.JWT_ISSUER, Secrets.JWT_AUDIENCE, Secrets.JWT_SECRET);
+builder.Services.AddScoped<Jwt>(_ => new(jwtSecrets));
 
 builder.Services
         .AddIdentity<User, IdentityRole>()

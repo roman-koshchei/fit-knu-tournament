@@ -87,8 +87,10 @@ builder.Services
         };
     }).AddGoogle(options =>
     {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
+        options.CallbackPath = new PathString("/api/auth/google-login-callback");
     });
 
 //builder.Services
@@ -103,21 +105,16 @@ builder.Services
 
 var app = builder.Build();
 
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseRouting();
 
-app.UseCors(options =>
-{
-    options
-        .SetIsOriginAllowed(_ => true) // UseDomainCors handle it.
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-});
+app.UseCors("AllowAnyOrigin");
 
-app.UseHttpsRedirection();
+
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthorization();

@@ -16,16 +16,16 @@
     }
 }
 
-namespace Microsoft.AspNetCore.Identity
-{
-    /// <summary>
-    /// Disable SignInManager, because we use JWT.
-    /// </summary>
-    public class SignInManager<TUser> where TUser : class
-    {
-        public SignInManager()
-        {
-            throw new NotSupportedException("Usage of SignInManager in the codebase isn't allowed. Because we use JWT.");
-        }
-    }
-}
+//namespace Microsoft.AspNetCore.Identity
+//{
+//    /// <summary>
+//    /// Disable SignInManager, because we use JWT.
+//    /// </summary>
+//    public class SignInManager<TUser> where TUser : class
+//    {
+//        public SignInManager()
+//        {
+//            throw new NotSupportedException("Usage of SignInManager in the codebase isn't allowed. Because we use JWT.");
+//        }
+//    }
+//}

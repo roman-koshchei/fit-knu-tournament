@@ -75,4 +75,20 @@ public class AccountController : ControllerBase
 
         return BadRequest(result.Errors);
     }
+
+    public record MeOutput(string Id, string? Email);
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> Me()
+    {
+        var uid = User.Uid();
+
+        var user = await db.Users.Where(x => x.Id == uid)
+            .Select(x => new MeOutput(x.Id, x.Email ?? ""))
+            .QueryOne();
+
+        if (user == null) return NotFound();
+        return Ok(user);
+    }
 }

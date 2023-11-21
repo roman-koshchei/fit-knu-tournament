@@ -1,6 +1,8 @@
 ﻿using Backend.Auth;
 using Data;
 using Lib;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -12,30 +14,56 @@ public class UserVersionMiddleware
     private readonly RequestDelegate next;
     private readonly Db db;
 
-    public UserVersionMiddleware(RequestDelegate next, Db db)
+    public UserVersionMiddleware(RequestDelegate next, IServiceProvider provider)
     {
         this.next = next;
-        this.db = db;
+
+        var scope = provider.CreateScope();
+        db = scope.ServiceProvider.GetRequiredService<Db>();
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
+        var requiresAuthentication = RequiresAuthentication(context);
+
+        if (!requiresAuthentication)
+        {
+            await next(context);
+            return;
+        }
+
         var uid = context.User.Uid();
-        var version = context.User.FindFirstValue(Jwt.Version);
-        if (uid == null || version == null)
+        var versionParsed = int.TryParse(context.User.FindFirst(Jwt.Version)?.Value, out var version);
+        if (uid == null || !versionParsed)
         {
             context.Response.StatusCode = 401;
             return;
         }
 
-        //var versionOk = await db.Users.Have(x => x.Id == version && x.Version == version);
-
-        //if (!domainAllowed)
-        //{
-        //    context.Response.StatusCode = 403;
-        //    return;
-        //}
+        var versionOk = await db.Users.Have(x => x.Id == uid && x.Version == version);
+        if (!versionOk)
+        {
+            context.Response.StatusCode = 401;
+            return;
+        }
 
         await next(context);
+    }
+
+    private static bool RequiresAuthentication(HttpContext context)
+    {
+        var endpoint = context.GetEndpoint();
+        if (endpoint == null) return false;
+
+        var authorize = endpoint.Metadata.GetMetadata<AuthorizeAttribute>();
+        return authorize != null;
+    }
+}
+
+public static class UserVersionMiddlewareExtensions
+{
+    public static IApplicationBuilder UseUserVersionMiddleware(this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<UserVersionMiddleware>();
     }
 }

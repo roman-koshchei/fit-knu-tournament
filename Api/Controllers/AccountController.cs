@@ -41,27 +41,34 @@ public class AccountController : ControllerBase
         return saved ? Ok() : Problem();
     }
 
-    public record PasswordBody(string Id, string OldPassword, string NewPassword);
+    public record PasswordBody(string OldPassword, string NewPassword);
 
+    // TODO: in 1 transaction
     [HttpPut("password")]
+    [Authorize]
     public async Task<IActionResult> Password([FromBody] PasswordBody body)
     {
-        var user = await db.Users.QueryOne(x => x.Id == body.Id);
+        var uid = User.Uid();
+
+        var user = await db.Users.QueryOne(x => x.Id == uid);
         if (user == null) return NotFound();
 
         var result = await userManager.ChangePasswordAsync(user, body.OldPassword, body.NewPassword);
-        if (result.Succeeded) return Ok();
+        if (!result.Succeeded) return BadRequest(result.Errors);
 
-        return BadRequest(result.Errors);
+        user.Version += 1;
+        var saved = await db.Save();
+
+        return saved ? Ok() : Problem();
     }
 
     [HttpDelete]
+    [Authorize]
     public async Task<IActionResult> Delete()
     {
-        //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var userId = "test";
+        var uid = User.Uid();
 
-        var user = await db.Users.QueryOne(x => x.Id == userId);
+        var user = await db.Users.QueryOne(x => x.Id == uid);
         if (user == null) return NotFound();
 
         var result = await userManager.DeleteAsync(user);

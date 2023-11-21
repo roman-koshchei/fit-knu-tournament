@@ -48,7 +48,7 @@ public class AuthController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        var newUser = new User { UserName = model.UserName, Email = model.Email };
+        var newUser = new User(model.Email);
 
         var result = await _userManager.CreateAsync(newUser, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);

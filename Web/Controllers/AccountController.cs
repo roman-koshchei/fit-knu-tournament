@@ -7,6 +7,6 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View();
+        return View(/* Here should be model of user*/);
     }
 }

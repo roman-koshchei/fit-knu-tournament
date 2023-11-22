@@ -19,10 +19,9 @@ public class HomeController : Controller
         this.jwt = jwt;
     }
 
-    [HttpGet("/")]
     public IActionResult Index()
     {
-        return View();
+        return View(new LoginViewModel(null));
     }
 
     [NonAction]
@@ -38,14 +37,13 @@ public class HomeController : Controller
 
     public record LoginInput(string Email, string Password);
 
-    [HttpPost("/")]
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
         if (user == null) return Redirect("/not-found");
 
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
-        if (!passwordCorrect) return View("Index", new { });
+        if (!passwordCorrect) return View("Index", new LoginViewModel("Password is incorrect"));
 
         var token = jwt.Token(user.Id, user.Version);
         AddAuthCookie(token);

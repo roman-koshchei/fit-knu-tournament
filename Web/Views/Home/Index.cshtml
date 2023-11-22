@@ -11,10 +11,12 @@
 
 @if(Model.Error != null)
 {
-    <mark></mark>
+    <p>
+        <mark>@Model.Error</mark>
+    </p>
 }
 
-<form method="post">
+<form method="post" asp-action="Login">
     <label for="email">Email</label>
     <input type="text" placeholder="Enter Email" name="email" id="email" required>
 

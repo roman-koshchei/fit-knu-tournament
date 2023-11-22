@@ -34,7 +34,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -47,7 +47,9 @@ namespace Web.Controllers
                 var existingUser = await _userManager.FindByEmailAsync(model.Email);
                 if (existingUser != null)
                 {
-                    return Conflict("Email is already taken");
+                    ModelState.AddModelError("Email", "Email already registered");
+                    return BadRequest("Email already registered");
+
                 }
 
                 var newUser = new User(model.Email);
@@ -56,11 +58,12 @@ namespace Web.Controllers
                 if (!result.Succeeded)
                 {
                     // Handle identity errors
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                    return StatusCode(500, ModelState);
+                    //foreach (var error in result.Errors)
+                    //{
+                    //    ModelState.AddModelError(string.Empty, error.Description);
+                    //}
+                    //return StatusCode(500, ModelState);
+                    return Redirect("/not-found");
                 }
 
                 // User created successfully, generate authentication token

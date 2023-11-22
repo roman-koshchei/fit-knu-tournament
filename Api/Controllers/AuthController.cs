@@ -18,42 +18,37 @@ public class AuthController : ControllerBase
         this.jwt = jwt;
     }
 
+    public record LoginModel(string Email, string Password);
+
     [HttpGet("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        var user = await userManager.FindByNameAsync(model.UserName);
+        var user = await userManager.FindByEmailAsync(model.Email);
+        if (user == null) return NotFound();
 
-        if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
-        {
-            return Unauthorized("Invalid credentials");
-        }
+        var passwordCorrect = await userManager.CheckPasswordAsync(user, model.Password);
+        if (!passwordCorrect) return BadRequest();
 
         var token = jwt.Token(user.Id, user.Version);
-
-        return Ok(new { Token = token, UserName = user.UserName, Email = user.Email });
+        return Ok(new { Token = token, user.Email });
     }
+
+    public record RegisterModel(string Email, string Password, string ConfirmPassword);
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
-        var existingUser = await userManager.FindByNameAsync(model.UserName);
-        if (existingUser != null)
-        {
-            return BadRequest("Username already exists");
-        }
+        if (model.Password != model.ConfirmPassword) return BadRequest("Passwords don't match");
+
+        var existingUser = await userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null) return Conflict("Email is already taken");
 
         var newUser = new User(model.Email);
 
         var result = await userManager.CreateAsync(newUser, model.Password);
-        if (!result.Succeeded) return BadRequest(result.Errors);
+        if (!result.Succeeded) return StatusCode(500, result.Errors);
 
         var token = jwt.Token(newUser.Id, newUser.Version);
-
-        return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
+        return Ok(new { Token = token, newUser.Email });
     }
-
-    // Models for input data
-    public record LoginModel(string UserName, string Password);
-
-    public record RegisterModel(string UserName, string Email, string Password);
 }

@@ -85,7 +85,8 @@ builder.Services
             ValidIssuer = Secrets.JWT_ISSUER,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.JWT_SECRET)),
         };
-    }).AddGoogle(options =>
+    })
+    .AddGoogle(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
@@ -93,18 +94,7 @@ builder.Services
         options.CallbackPath = new PathString("/api/auth/google-login-callback");
     });
 
-//builder.Services
-//    .AddAuthentication(options =>
-//    {
-//        options.DefaultAuthenticateScheme = RefreshOnly.Scheme;
-//        options.DefaultForbidScheme = RefreshOnly.Scheme;
-//        options.DefaultChallengeScheme = RefreshOnly.Scheme;
-//        options.DefaultScheme = RefreshOnly.Scheme;
-//    })
-//    .AddScheme<AuthenticationSchemeOptions, RefreshOnlyHandler>(RefreshOnly.Scheme, options => { });
-
 var app = builder.Build();
-
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -112,7 +102,6 @@ app.UseSwaggerUI();
 app.UseRouting();
 
 app.UseCors("AllowAnyOrigin");
-
 
 // app.UseHttpsRedirection();
 

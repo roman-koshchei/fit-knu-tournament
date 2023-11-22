@@ -100,7 +100,15 @@ app.UseSwaggerUI();
 
 app.UseRouting();
 
-app.UseCors("AllowAnyOrigin");
+//app.UseCors("AllowAnyOrigin");
+app.UseCors(options =>
+{
+    options
+        .SetIsOriginAllowed(_ => true)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+});
 
 // app.UseHttpsRedirection();
 

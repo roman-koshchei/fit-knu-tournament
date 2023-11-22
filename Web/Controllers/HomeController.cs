@@ -3,6 +3,7 @@ using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Web.Config;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -18,14 +19,26 @@ public class HomeController : Controller
         this.jwt = jwt;
     }
 
+    [HttpGet("/")]
     public IActionResult Index()
     {
         return View();
     }
 
+    [NonAction]
+    public void AddAuthCookie(string token)
+    {
+        Response.Cookies.Append("token", token, new()
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTimeOffset.Now.AddDays(30)
+        });
+    }
+
     public record LoginInput(string Email, string Password);
 
-    [HttpPost]
+    [HttpPost("/")]
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
@@ -35,9 +48,9 @@ public class HomeController : Controller
         if (!passwordCorrect) return BadRequest();
 
         var token = jwt.Token(user.Id, user.Version);
-        return Ok(new { Token = token, user.Email });
+        AddAuthCookie(token);
 
-        //return RedirectToAction("Index", "Account");
+        return RedirectToAction("Index", "Account");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

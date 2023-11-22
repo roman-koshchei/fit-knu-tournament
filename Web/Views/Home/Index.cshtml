@@ -1,7 +1,32 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model LoginViewModel;
+
+@{
+    ViewData["Title"] = "Welcome";
 }
 
+<hgroup>
+    <h1>QuasarSoft Auth</h1> 
+    <h2>Authentication service made by QuasarSoft team for FIT KNU Tournament 2023</h2>
+</hgroup>
 
-<h1>FUCK YOU!
-</h1>
+@if(Model.Error != null)
+{
+    <p>
+        <mark>@Model.Error</mark>
+    </p>
+}
+
+<form method="post" asp-action="Login">
+    <label for="email">Email</label>
+    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+    <label for="password">Password</label>
+    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+    <button type="submit" class="registerbtn">Login</button>
+</form>
+
+
+<div class="container signin">
+<p>You havent account? <a href="/logining">Register</a></p>
+</div>

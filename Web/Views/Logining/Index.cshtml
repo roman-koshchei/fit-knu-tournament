@@ -1,0 +1,56 @@
+﻿@model Web.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Registration Page";
+}
+
+<form method="post">
+    
+    <div class="container">
+        <h1 style="text-align: center;">Registretion</h1>
+        <p style="text-align: center;">Please fill in this form to create an account</p>
+
+        <label asp-for="Email"><b>Email</b></label>
+        <input asp-for="Email" class="form-control" placeholder="Enter Email"/>
+        
+
+        <label asp-for="Password"><b>Password</b></label>
+        <input asp-for="Password" class="form-control" placeholder="Enter Password"/>
+        
+
+        <label asp-for="ConfirmPassword"><b>Confirm Password</b></label>
+        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password"/>
+        
+        @if (string.IsNullOrEmpty(ViewData["PasswordError"] as string))
+        {
+            <div asp-validation-summary="All" class="text-danger"></div>
+        }
+    </div>
+
+    <button type="submit" class="registerbtn">Register</button>
+
+    <div class="container signin">
+        <p>Already have an account? <a href="/home">Logining</a>.</p>
+    </div>
+</form>
+
+@* <form method="post"  action="/account">
+    <div class="container">
+        <h1 style="text-align: center;">Registretion</h1>
+        <p style="text-align: center;">Please fill in this form to create an account</p>
+        <hr>
+        <label for="email"><b>Email</b></label>
+        <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+
+        <label for="psw-repeat"><b>Repeat Password</b></label>
+        <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
+        <hr>
+
+        <button type="submit" class="registerbtn">Register</button>
+        <div class="container signin">
+            <p>Already have an account? <a href="/home">Logining</a>.</p>
+        </div>
+    </div>
+</form> *@

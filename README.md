@@ -27,9 +27,10 @@ Authentication service made by QuasarSoft team for FIT KNU Tournament 2023
 ### Login
 
 Url: `/api/auth/login`
+
 Body:
 
-```ts
+```js
 {
   email: string
   password: string
@@ -44,7 +45,7 @@ Status codes:
 
 200 Response:
 
-```ts
+```js
 {
   token: string
   email: string
@@ -54,9 +55,10 @@ Status codes:
 ### Register
 
 Url: `/api/auth/register`
+
 Body:
 
-```ts
+```js
 {
   email: string
   password: string
@@ -73,7 +75,7 @@ Status codes:
 
 200 Response:
 
-```ts
+```js
 {
   token: string
   email: string

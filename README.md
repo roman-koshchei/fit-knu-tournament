@@ -1,6 +1,8 @@
-# fit-knu-tournament
+# QuasarSoft Auth
 
-FIT KNU Tournament 2023 best project
+Authentication service made by QuasarSoft team for FIT KNU Tournament 2023
+
+## API tasks
 
 - [x] Registration: POST email + pasword + confirm password -> return token
 
@@ -16,7 +18,9 @@ FIT KNU Tournament 2023 best project
 
 - [x] Delete user: DELETE token + password
 
-- [ ] Google: ?
+- [ ] Google:
+
+## UI tasks
 
 - [ ] UI
 

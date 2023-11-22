@@ -22,63 +22,69 @@ public class GoogleController : ControllerBase
         this.jwt = jwt;
     }
 
+    public record UserInfo(string Token, string Email);
+
     [HttpGet]
-    public IActionResult ExternalLogin()
+    public IActionResult Login()
     {
-        var properties = signInManager.ConfigureExternalAuthenticationProperties("google", Url.Action("GoogleLoginCallback"));
+        var redirect = "/api/auth/google/callback";
+        var properties = signInManager.ConfigureExternalAuthenticationProperties("google", redirect);
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
-    [HttpGet("signin-google")]
-    public async Task<IActionResult> GoogleLoginCallback(string? remoteError = null)
+    [HttpGet("callback")]
+    public async Task<IActionResult> Callback(string? remoteError = null)
     {
-        if (remoteError != null)
-        {
-            return BadRequest($"Error from external provider: {remoteError}");
-        }
+        if (remoteError != null) return BadRequest($"Google error: {remoteError}");
 
         var info = await signInManager.GetExternalLoginInfoAsync();
-        if (info == null)
-        {
-            return BadRequest("Error loading external login information.");
-        }
+        if (info == null) return BadRequest("Error loading external login information.");
 
-        // Check if a user with the Google-registered email exists
-        var user = await userManager.FindByEmailAsync(info.Principal.FindFirstValue(ClaimTypes.Email));
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        if (email == null) return BadRequest("No email is found");
 
+        var user = await userManager.FindByEmailAsync(email);
         if (user != null)
         {
-            // User exists, sign them in
-            await signInManager.SignInAsync(user, isPersistent: false);
-            var token = jwt.Token(user.Id, user.Version);
+            var newToken = await SignInUserWithExternal(user, info);
+            if (newToken == null) return Problem();
 
-            // Return the response as JSON
-            return Ok(new { Token = token, UserName = user.UserName, Email = user.Email });
+            return Ok(new UserInfo(newToken, email));
         }
-        else
-        {
-            // User does not exist, create a new user
-            var newUser = new User(email: info.Principal.FindFirstValue(ClaimTypes.Email));
 
-            var result = await userManager.CreateAsync(newUser);
-            if (!result.Succeeded)
-            {
-                return BadRequest("Error creating a new user.");
-            }
+        var token = await CreateUserWithExternal(email, info);
+        if (token == null) return Problem("Error creating a new user.");
 
-            // Add the external login for the user
-            result = await userManager.AddLoginAsync(newUser, info);
-            if (!result.Succeeded)
-            {
-                return BadRequest("Error adding external login to the new user.");
-            }
+        return Ok(new UserInfo(token, email));
+    }
 
-            // Sign in the newly created user
-            await signInManager.SignInAsync(newUser, isPersistent: false);
-            var token = jwt.Token(newUser.Id, newUser.Version);
+    [NonAction]
+    private async Task<string?> SignInUserWithExternal(User user, ExternalLoginInfo loginInfo)
+    {
+        var signInResult = await signInManager.ExternalLoginSignInAsync(
+            loginInfo.LoginProvider, loginInfo.ProviderKey, isPersistent: false, bypassTwoFactor: true
+        );
+        if (!signInResult.Succeeded) return null;
 
-            // Return the response as JSON
-            return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
-        }
+        return jwt.Token(user.Id, user.Version);
+    }
+
+    /// <summary>
+    /// Create new user for external auth and new user token.
+    /// </summary>
+    /// <returns>Token if success, otherwise null</returns>
+    [NonAction]
+    private async Task<string?> CreateUserWithExternal(string email, ExternalLoginInfo loginInfo)
+    {
+        var newUser = new User(email);
+
+        var result = await userManager.CreateAsync(newUser);
+        if (!result.Succeeded) return null;
+
+        // Add the external login for the user
+        result = await userManager.AddLoginAsync(newUser, loginInfo);
+        if (!result.Succeeded) return null;
+
+        return jwt.Token(newUser.Id, newUser.Version);
     }
 }

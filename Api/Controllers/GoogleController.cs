@@ -21,15 +21,15 @@ public class GoogleController : ControllerBase
         this.jwt = jwt;
     }
 
-    [HttpGet]
+    [HttpGet("google-signin")]
     public IActionResult ExternalLogin()
     {
         var properties = signInManager.ConfigureExternalAuthenticationProperties("google", Url.Action("GoogleLoginCallback"));
         return Challenge(properties, "Google");
     }
 
-    [HttpPost("callback")]
-    public async Task<IActionResult> GoogleLoginCallback(string? remoteError = null)
+    [HttpGet("signin-google")]
+    public async Task<IActionResult> GoogleLoginCallback(string remoteError = null)
     {
         if (remoteError != null)
         {
@@ -80,4 +80,5 @@ public class GoogleController : ControllerBase
             return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
         }
     }
+
 }

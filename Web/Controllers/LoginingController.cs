@@ -5,6 +5,7 @@ namespace Web.Controllers;
 public class LoginingController : Controller
 {
     public IActionResult Index()
+
     {
         return View();
     }
@@ -12,5 +13,6 @@ public class LoginingController : Controller
     [HttpPost]
     public async Task<IActionResult> LoginPost()
     {
+        return Ok();
     }
 }

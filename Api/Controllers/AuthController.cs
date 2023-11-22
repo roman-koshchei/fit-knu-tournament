@@ -3,10 +3,6 @@ using Lib;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
-using System.Xml;
 
 namespace Api.Controllers
 {
@@ -59,12 +55,9 @@ namespace Api.Controllers
             return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
         }
 
-
         // Models for input data
         public record LoginModel(string UserName, string Password);
 
         public record RegisterModel(string UserName, string Email, string Password);
-
     }
 }
-

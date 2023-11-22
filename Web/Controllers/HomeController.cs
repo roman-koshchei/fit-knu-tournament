@@ -42,15 +42,21 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
-        if (user == null) return NotFound();
+        if (user == null) return Redirect("/not-found");
 
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
-        if (!passwordCorrect) return BadRequest();
+        if (!passwordCorrect) return View("Index", new { });
 
         var token = jwt.Token(user.Id, user.Version);
         AddAuthCookie(token);
 
         return RedirectToAction("Index", "Account");
+    }
+
+    [HttpGet("/not-found")]
+    public IActionResult NotFoundPage()
+    {
+        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

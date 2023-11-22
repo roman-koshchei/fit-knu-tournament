@@ -24,60 +24,7 @@ Authentication service made by QuasarSoft team for FIT KNU Tournament 2023
 
 ## API reference
 
-### Login
+To work with API you can look at:
 
-Url: `/api/auth/login`
-
-Body:
-
-```js
-{
-  email: string
-  password: string
-}
-```
-
-Status codes:
-
-- 404 - user (email) isn't found
-- 400 - password is incorrect
-- 200 - ok
-
-200 Response:
-
-```js
-{
-  token: string
-  email: string
-}
-```
-
-### Register
-
-Url: `/api/auth/register`
-
-Body:
-
-```js
-{
-  email: string
-  password: string
-  confirmPassword: string
-}
-```
-
-Status codes:
-
-- 400 - password is incorrect
-- 409 - email is taken
-- 500 - errors during registration
-- 200 - ok
-
-200 Response:
-
-```js
-{
-  token: string
-  email: string
-}
-```
+- Swagger documentation on the [website](https://fit-knu-tournament.onrender.com/swagger)
+- Markdown documentation [API reference](./docs/api.md)

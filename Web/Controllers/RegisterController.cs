@@ -3,10 +3,15 @@ using Web.Models;
 
 namespace Web.Controllers;
 
-
-public class LoginingController : Controller
+public class RegisterController : Controller
 {
-    public IActionResult Index(RegisterViewModel model)
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Post(RegisterViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -19,7 +24,7 @@ public class LoginingController : Controller
 
             return RedirectToAction("Index", "Account");
         }
-       return View(model);
+        return View(model);
     }
 
     [HttpPost]

@@ -90,7 +90,6 @@ builder.Services
         options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
-        options.CallbackPath = new PathString("/api/auth/google-login-callback");
     });
 
 //builder.Services

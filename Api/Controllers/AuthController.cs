@@ -24,7 +24,7 @@ namespace Api.Controllers
             _jwt = jwt;
         }
 
-        [HttpPost("login")]
+        [HttpGet("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.UserName);
@@ -57,14 +57,14 @@ namespace Api.Controllers
 
             return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
         }
-        [HttpPost("google-login")]
+        [HttpGet("google-signin")]
         public IActionResult ExternalLogin()
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties("google", Url.Action("GoogleLoginCallback"));
             return Challenge(properties, "Google");
         }
 
-        [HttpGet("google-login-callback")]
+        [HttpGet("signin-google")]
         public async Task<IActionResult> GoogleLoginCallback(string remoteError = null)
         {
             if (remoteError != null)

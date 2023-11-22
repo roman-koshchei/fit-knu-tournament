@@ -1,15 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Welcome";
+    ViewData["Title"] = "Registration Page";
 }
 
-<hgroup>
-    <h1>QuasarSoft Auth</h1> 
-    <h2>Authentication service made by QuasarSoft team for FIT KNU Tournament 2023</h2>
-</hgroup>
-
-<form method="post" action="action_page.php">
+<form method="post"  action="action_page.php">
     <div class="container">
-        <h1 style="text-align: center;">Login</h1>
+        <h1 style="text-align: center;">Sign in</h1>
         <hr>
         <label for="email"><b>Email</b></label>
         <input type="text" placeholder="Enter Email" name="email" id="email" required>
@@ -17,6 +12,8 @@
         <label for="psw"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
         <hr>
+
+        <p>By creating an account you agree to our <a href="/home">Terms & Privacy</a></p>
         <button type="submit" class="registerbtn">Login</button>
     </div>
 

@@ -2,15 +2,11 @@
 
 namespace Web.Controllers;
 
-public class LoginingController : Controller
+public class AccountController : Controller
 {
+    [HttpGet]
     public IActionResult Index()
     {
         return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> LoginPost()
-    {
     }
 }

@@ -3,62 +3,68 @@ using Lib;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
+using System.Xml;
 
-namespace Api.Controllers;
-
-[Route("api/auth")]
-[ApiController]
-public class AuthController : ControllerBase
+namespace Api.Controllers
 {
-    private readonly UserManager<User> userManager;
-    private readonly Jwt jwt;
-
-    public AuthController(UserManager<User> userManager, Jwt jwt)
+    [Route("api/auth")]
+    [ApiController]
+    public class AuthController : ControllerBase
     {
-        this.userManager = userManager;
-        this.jwt = jwt;
-    }
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly Jwt _jwt;
 
-    public record LoginBody(string Email, string Password);
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginBody body)
-    {
-        var user = await userManager.FindByEmailAsync(body.Email);
-        if (user == null) return NotFound();
-
-        var passwordCorrect = await userManager.CheckPasswordAsync(user, body.Password);
-        if (!passwordCorrect) return BadRequest("Invalid password");
-
-        var token = jwt.Token(user.Id, user.Version);
-        return Ok(new { Token = token });
-    }
-
-    public record RegisterBody(string Email, string Password, string ConfirmPassword);
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterBody body)
-    {
-        if (body.Password != body.ConfirmPassword) return BadRequest("Passwords don't match");
-
+        public AuthController(SignInManager<User> signInManager, UserManager<User> userManager, Jwt jwt)
         {
-            var existingUser = await userManager.FindByEmailAsync(body.Email);
-            if (existingUser != null) return BadRequest("Email is already taken");
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _jwt = jwt;
         }
 
-        var user = new User(body.Email);
+        [HttpGet("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var user = await _userManager.FindByNameAsync(model.UserName);
 
-        var result = await userManager.CreateAsync(user, body.Password);
-        if (!result.Succeeded) return BadRequest(result.Errors);
+            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                return Unauthorized("Invalid credentials");
+            }
 
-        var token = jwt.Token(user.Id, user.Version);
-        return Ok(new { Token = token });
-    }
+            var token = _jwt.Token(user.Id, user.Version);
 
-    [HttpGet("check")]
-    [Authorize]
-    public async Task<IActionResult> Check()
-    {
-        return Ok();
+            return Ok(new { Token = token, UserName = user.UserName, Email = user.Email });
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        {
+            var existingUser = await _userManager.FindByNameAsync(model.UserName);
+            if (existingUser != null)
+            {
+                return BadRequest("Username already exists");
+            }
+
+            var newUser = new User(model.Email);
+
+            var result = await _userManager.CreateAsync(newUser, model.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            var token = _jwt.Token(newUser.Id, newUser.Version);
+
+            return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
+        }
+
+
+        // Models for input data
+        public record LoginModel(string UserName, string Password);
+
+        public record RegisterModel(string UserName, string Email, string Password);
+
     }
 }
+

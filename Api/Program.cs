@@ -88,6 +88,7 @@ builder.Services
     })
     .AddGoogle(options =>
     {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
     });
@@ -99,6 +100,7 @@ app.UseSwaggerUI();
 
 app.UseRouting();
 
+//app.UseCors("AllowAnyOrigin");
 app.UseCors(options =>
 {
     options
@@ -108,7 +110,7 @@ app.UseCors(options =>
         .AllowCredentials();
 });
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthorization();

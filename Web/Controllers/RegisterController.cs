@@ -58,12 +58,11 @@ namespace Web.Controllers
                 if (!result.Succeeded)
                 {
                     // Handle identity errors
-                    //foreach (var error in result.Errors)
-                    //{
-                    //    ModelState.AddModelError(string.Empty, error.Description);
-                    //}
-                    //return StatusCode(500, ModelState);
-                    return Redirect("/not-found");
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return StatusCode(500, ModelState);
                 }
 
                 // User created successfully, generate authentication token

@@ -3,6 +3,20 @@
 }
 
 
-<h1>Здесь может быть ваша реклама!!</h1>
-<p>Все деньги пойдут в карман судей</p>
+<form method="post" action="action_page.php">
+    <div class="container">
+        <h1 style="text-align: center;">Login</h1>
+        <hr>
+        <label for="email"><b>Email</b></label>
+        <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+        <hr>
+        <button type="submit" class="registerbtn">Login</button>
+    </div>
+
+    <div class="container signin">
+        <p>You havent account? <a href="/register">Register</a></p>
+    </div>
+</form>

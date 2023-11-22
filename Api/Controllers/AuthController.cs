@@ -1,6 +1,5 @@
 ﻿using Data.Tables;
 using Lib;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,46 +18,42 @@ public class AuthController : ControllerBase
         this.jwt = jwt;
     }
 
-    public record LoginBody(string Email, string Password);
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginBody body)
+    [HttpGet("login")]
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        var user = await userManager.FindByEmailAsync(body.Email);
-        if (user == null) return NotFound();
+        var user = await userManager.FindByNameAsync(model.UserName);
 
-        var passwordCorrect = await userManager.CheckPasswordAsync(user, body.Password);
-        if (!passwordCorrect) return BadRequest("Invalid password");
-
-        var token = jwt.Token(user.Id, user.Version);
-        return Ok(new { Token = token });
-    }
-
-    public record RegisterBody(string Email, string Password, string ConfirmPassword);
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterBody body)
-    {
-        if (body.Password != body.ConfirmPassword) return BadRequest("Passwords don't match");
-
+        if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
         {
-            var existingUser = await userManager.FindByEmailAsync(body.Email);
-            if (existingUser != null) return BadRequest("Email is already taken");
+            return Unauthorized("Invalid credentials");
         }
 
-        var user = new User(body.Email);
+        var token = jwt.Token(user.Id, user.Version);
 
-        var result = await userManager.CreateAsync(user, body.Password);
+        return Ok(new { Token = token, UserName = user.UserName, Email = user.Email });
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    {
+        var existingUser = await userManager.FindByNameAsync(model.UserName);
+        if (existingUser != null)
+        {
+            return BadRequest("Username already exists");
+        }
+
+        var newUser = new User(model.Email);
+
+        var result = await userManager.CreateAsync(newUser, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
 
-        var token = jwt.Token(user.Id, user.Version);
-        return Ok(new { Token = token });
+        var token = jwt.Token(newUser.Id, newUser.Version);
+
+        return Ok(new { Token = token, UserName = newUser.UserName, Email = newUser.Email });
     }
 
-    [HttpGet("check")]
-    [Authorize]
-    public async Task<IActionResult> Check()
-    {
-        return Ok();
-    }
+    // Models for input data
+    public record LoginModel(string UserName, string Password);
+
+    public record RegisterModel(string UserName, string Email, string Password);
 }

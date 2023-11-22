@@ -2,7 +2,6 @@
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -31,7 +30,7 @@ public class AuthController : ControllerBase
 
         var token = _jwt.Token(user.Id, user.Version);
 
-        return Ok(new { Token = token, UserName = user.UserName, Email = user.Email });
+        return Ok(new { Token = token, Email = user.Email });
     }
 
     [HttpPost("register")]

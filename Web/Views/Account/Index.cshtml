@@ -1,4 +1,4 @@
-﻿
+﻿@model AccountViewModel
 
 @{
     ViewData["Title"] = "Welcome";
@@ -9,7 +9,11 @@
 
 <table>
     <tr>
+        <th>Id</th>
+        <td>@Model.Id</td>
+    </tr>
+    <tr>
         <th>Email</th>
-        <td></td>
+        <td>@Model.Email</td>
     </tr>
 </table>

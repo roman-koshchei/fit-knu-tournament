@@ -58,6 +58,10 @@ public class GoogleController : ControllerBase
         return Ok(new UserInfo(token, email));
     }
 
+    /// <summary>
+    /// Sign in user with external auth
+    /// </summary>
+    /// <returns>Token if success, otherwise null</returns>
     [NonAction]
     private async Task<string?> SignInUserWithExternal(User user, ExternalLoginInfo loginInfo)
     {

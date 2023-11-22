@@ -1,5 +1,6 @@
 ﻿using Data.Tables;
 using Lib;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -25,7 +26,7 @@ public class GoogleController : ControllerBase
     public IActionResult ExternalLogin()
     {
         var properties = signInManager.ConfigureExternalAuthenticationProperties("google", Url.Action("GoogleLoginCallback"));
-        return Challenge(properties, "Google");
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
     [HttpGet("signin-google")]

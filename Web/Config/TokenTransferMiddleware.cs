@@ -6,10 +6,12 @@
 public class TokenTransferMiddleware
 {
     private readonly RequestDelegate next;
+    private readonly ILogger logger;
 
-    public TokenTransferMiddleware(RequestDelegate next)
+    public TokenTransferMiddleware(RequestDelegate next, ILogger logger)
     {
         this.next = next;
+        this.logger = logger;
     }
 
     // Key for accessing the token from the cookie.
@@ -23,20 +25,18 @@ public class TokenTransferMiddleware
     {
         // Retrieve the token from the cookie.
         var cookie = Cookie(context);
-
-        // If no token is found, continue to the next middleware.
+        logger.LogWarning(cookie);
         if (cookie == null)
         {
             await next(context);
             return;
         }
-
-        // Set the Authorization header with the token.
         if (context.Request.Headers.Authorization.Count == 0)
         {
-            context.Request.Headers.Authorization = new($"Bearer {cookie}");
             context.Request.Headers.Remove("Authorization");
             context.Request.Headers.Add("Authorization", $"Bearer {cookie}");
+
+            logger.LogWarning($"Bearer {cookie}");
         }
 
         // Continue processing the request.

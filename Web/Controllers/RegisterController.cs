@@ -1,4 +1,5 @@
-﻿using Data.Tables;
+﻿using Data;
+using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +12,23 @@ public class RegisterController : Controller
 {
     private readonly UserManager<User> userManager;
     private readonly Jwt jwt;
+    private readonly Db db;
 
-    public RegisterController(UserManager<User> userManager, Jwt jwt)
+    public RegisterController(UserManager<User> userManager, Jwt jwt, Db db)
     {
         this.userManager = userManager;
         this.jwt = jwt;
+        this.db = db;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var uid = User.Uid();
+
+        var user = await db.Users.QueryOne(x => x.Id == uid);
+        if (user == null) return View(new RegisterViewModel());
+        return Redirect("Account");
+
     }
 
     [HttpPost]

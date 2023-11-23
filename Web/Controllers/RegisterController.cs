@@ -2,29 +2,20 @@
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Web.Config;
 using Web.Models;
 
 namespace Web.Controllers;
 
 public class RegisterController : Controller
 {
-    private readonly UserManager<User> _userManager;
-    private readonly Jwt _jwt;
+    private readonly UserManager<User> userManager;
+    private readonly Jwt jwt;
 
-    public RegisterController(UserManager<User> userManager, Jwt jwtService)
+    public RegisterController(UserManager<User> userManager, Jwt jwt)
     {
-        _userManager = userManager;
-        _jwt = jwtService;
-    }
-
-    public void AddAuthCookie(string token)
-    {
-        Response.Cookies.Append("token", token, new()
-        {
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTimeOffset.Now.AddDays(30)
-        });
+        this.userManager = userManager;
+        this.jwt = jwt;
     }
 
     public IActionResult Index()
@@ -43,7 +34,7 @@ public class RegisterController : Controller
                 return BadRequest("Passwords do not match");
             }
 
-            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            var existingUser = await userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
                 ModelState.AddModelError("Email", "Email already registered");
@@ -52,7 +43,7 @@ public class RegisterController : Controller
 
             var newUser = new User(model.Email);
 
-            var result = await _userManager.CreateAsync(newUser, model.Password);
+            var result = await userManager.CreateAsync(newUser, model.Password);
             if (!result.Succeeded)
             {
                 // Handle identity errors
@@ -64,11 +55,11 @@ public class RegisterController : Controller
             }
 
             // User created successfully, generate authentication token
-            var token = _jwt.Token(newUser.Id, newUser.Version);
+            var token = jwt.Token(newUser.Id, newUser.Version);
 
-            AddAuthCookie(token);
+            Response.AddAuthCookie(token);
 
-            return View("Success");
+            return Redirect("/Account");
         }
         return View("Index", new RegisterViewModel());
     }

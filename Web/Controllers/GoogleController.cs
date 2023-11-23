@@ -6,6 +6,7 @@ using NuGet.Configuration;
 using static Web.Controllers.Api.GoogleController;
 using System.Security.Claims;
 using Web.Services;
+using Web.Config;
 
 namespace Web.Controllers;
 
@@ -45,12 +46,14 @@ public class GoogleController : Controller
             var newToken = await googleService.SignInUserWithExternal(user, info);
             if (newToken == null) return Redirect("/");
 
+            Response.AddAuthCookie(newToken);
             return Redirect("/Account");
         }
 
         var token = await googleService.CreateUserWithExternal(email, info);
         if (token == null) return Problem("Error creating a new user.");
 
+        Response.AddAuthCookie(token);
         return Redirect("/Account");
     }
 }

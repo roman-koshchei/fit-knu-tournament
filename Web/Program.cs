@@ -118,6 +118,8 @@ app.UseRouting();
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseTokenTransferMiddleware();
+
 app.UseAuthorization();
 app.UseAuthorization();
 

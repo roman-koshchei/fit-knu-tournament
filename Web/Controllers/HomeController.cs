@@ -22,9 +22,21 @@ public class HomeController : Controller
         this.db = db;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View(new LoginViewModel(IsRegistered: User.HaveUid(), Error: null));
+        bool userExist = false;
+        var uid = User.MaybeUid();
+        if (uid == null)
+        {
+            Response.Cookies.Delete("token");
+        }
+        else
+        {
+            userExist = await db.Users.Have(x => x.Id == uid);
+            if (!userExist) Response.Cookies.Delete("token");
+        }
+
+        return View(new LoginViewModel(IsRegistered: userExist, Error: null));
     }
 
     public record LoginInput(string Email, string Password);

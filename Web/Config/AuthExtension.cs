@@ -15,6 +15,11 @@ public static class AuthExtension
         return principal.FindFirst(Jwt.Uid)!.Value;
     }
 
+    public static string? MaybeUid(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirst(Jwt.Uid)?.Value;
+    }
+
     public static bool HaveUid(this ClaimsPrincipal principal)
     {
         return principal.FindFirst(Jwt.Uid) != null;

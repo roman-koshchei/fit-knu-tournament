@@ -15,10 +15,10 @@ Authentication service made by QuasarSoft team for FIT KNU Tournament 2023
 
 ## UI tasks
 
-- [ ] Home/login form/page
-- [ ] Registartion page
-- [ ] Account info
-- [ ] Confirm account delete page
+- [x] Home/login form/page
+- [x] Registartion page
+- [x] Account info
+- [x] Confirm account delete page
 - [ ] Change password page
 - [ ] Change email page
 

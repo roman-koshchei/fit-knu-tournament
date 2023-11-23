@@ -3,7 +3,6 @@ using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Web.Config;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -40,7 +39,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
-        if (user == null) return Redirect("/not-found");
+        if (user == null) return View("Index", new LoginViewModel("User with such email isn't found"));
 
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
         if (!passwordCorrect) return View("Index", new LoginViewModel("Password is incorrect"));
@@ -49,12 +48,6 @@ public class HomeController : Controller
         AddAuthCookie(token);
 
         return RedirectToAction("Index", "Account");
-    }
-
-    [HttpGet("/not-found")]
-    public IActionResult NotFoundPage()
-    {
-        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

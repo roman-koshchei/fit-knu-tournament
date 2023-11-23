@@ -1,6 +1,5 @@
 ﻿using Data;
 using Data.Tables;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,5 +50,13 @@ public class AccountController : Controller
         if (result.Succeeded) return Redirect("/");
 
         return View("Delete", new DeleteViewModel(result.Errors.Select(x => x.Description)));
+    }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("token");
+        return Redirect("/");
     }
 }

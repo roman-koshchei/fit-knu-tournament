@@ -41,7 +41,6 @@ public class AccountController : ControllerBase
 
     public record PasswordBody(string OldPassword, string NewPassword);
 
-    // TODO: in 1 transaction
     [HttpPut("password")]
     [Authorize]
     public async Task<IActionResult> Password([FromBody] PasswordBody body)

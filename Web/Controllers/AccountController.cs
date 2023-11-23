@@ -93,4 +93,35 @@ public class AccountController : Controller
 
         return Redirect("/Account");
     }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult Password()
+    {
+        return View("Password", new ChangePasswordModel());
+    }
+
+    public record PasswordBody(string OldPassword, string NewPassword);
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword(PasswordBody body)
+    {
+        var uid = User.Uid();
+
+        var user = await db.Users.QueryOne(x => x.Id == uid);
+        if (user == null) return Redirect("/");
+
+        var result = await userManager.ChangePasswordAsync(user, body.OldPassword, body.NewPassword);
+        if (!result.Succeeded) return Redirect("/Account");
+
+        user.Version += 1;
+        var saved = await db.Save();
+        if (!saved) return Redirect("/Account");
+
+        var token = jwt.Token(user.Id, user.Version);
+        Response.AddAuthCookie(token);
+
+        return Redirect("/Account");
+    }
 }

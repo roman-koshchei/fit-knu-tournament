@@ -29,26 +29,56 @@ public class CustomAuthMiddleware
             return;
         }
 
+        var isApi = context.Request.Path.ToString().StartsWith("/api");
+
         var token = GetToken(context.Request);
         if (token == null)
         {
+            Unauthorized(context, isApi);
+            return;
         }
 
-        //var versionParsed = int.TryParse(context.User.FindFirst(Jwt.Version)?.Value, out var version);
-        //if (uid == null || !versionParsed)
-        //{
-        //    context.Response.StatusCode = 401;
-        //    return;
-        //}
+        var princimal = jwt.Validate(token);
+        if (princimal == null)
+        {
+            Unauthorized(context, isApi);
+            return;
+        }
 
-        //var versionOk = await db.Users.Have(x => x.Id == uid && x.Version == version);
-        //if (!versionOk)
-        //{
-        //    context.Response.StatusCode = 401;
-        //    return;
-        //}
+        var uid = princimal.FindFirst(Jwt.Uid)?.Value;
+        if (uid == null)
+        {
+            Unauthorized(context, isApi);
+            return;
+        }
+
+        var versionParsed = int.TryParse(princimal.FindFirst(Jwt.Version)?.Value, out var version);
+        if (!versionParsed)
+        {
+            Unauthorized(context, isApi);
+            return;
+        }
+
+        var versionOk = await db.Users.Have(x => x.Id == uid && x.Version == version);
+        if (!versionOk)
+        {
+            Unauthorized(context, isApi);
+            return;
+        }
 
         await next(context);
+    }
+
+    private static void Unauthorized(HttpContext context, bool isApi)
+    {
+        if (isApi)
+        {
+            context.Response.StatusCode = 401;
+        }
+        else
+        {
+            context.Response.Redirect("/");
+        }
     }
 
     private static bool RequiresAuthentication(HttpContext context)

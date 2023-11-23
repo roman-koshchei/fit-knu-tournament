@@ -113,19 +113,15 @@ app.UseCors(options =>
         .AllowCredentials();
 });
 
-app.UseTokenTransferMiddleware();
-
 app.UseRouting();
 
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.UseCustomAuthMiddleware();
-
-app.UseUnauthorizedMiddleware();
 
 app.MapControllerRoute(
     name: "default",

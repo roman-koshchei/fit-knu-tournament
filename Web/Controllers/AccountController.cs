@@ -31,7 +31,7 @@ public class AccountController : Controller
         var user = await db.Users.QueryOne(x => x.Id == uid);
         if (user == null) return RedirectToAction("NotFoundPage", "Home");
 
-        return View(new AccountViewModel(user.Id, user.Email));
+        return View(new AccountViewModel(user.Id, user.Email, user.PasswordHash == null));
     }
 
     [HttpGet]

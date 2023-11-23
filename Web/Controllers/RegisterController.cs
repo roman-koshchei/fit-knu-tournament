@@ -27,7 +27,6 @@ public class RegisterController : Controller
         });
     }
 
-
     public IActionResult Index()
     {
         return View();
@@ -49,7 +48,6 @@ public class RegisterController : Controller
             {
                 ModelState.AddModelError("Email", "Email already registered");
                 return BadRequest("Email already registered");
-
             }
 
             var newUser = new User(model.Email);

@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Web.Config;
+using Web.Services;
 
 Env.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
@@ -91,6 +92,8 @@ builder.Services
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
     });
+
+builder.Services.AddScoped<GoogleService>();
 
 var app = builder.Build();
 

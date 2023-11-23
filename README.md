@@ -46,8 +46,7 @@ Endpoint: `POST /api/auth/register`
 ### Response
 ```
 {
-  status_code: 200,
-  token: your_access_token
+  ??
 }
 ```
 
@@ -71,8 +70,7 @@ Endpoint: `POST /api/auth/login`
 ### Response
 ```
 {
-  status_code: 200,
-  token: your_access_token
+  ??
 }
 ```
 
@@ -82,19 +80,16 @@ Possible status codes:
 
 ## Check
 
-Endpoint: `GET /api/autrh/check`
+Endpoint: `GET /api/auth/check`
 
 ### Request
-```
-{
-  token: your_token
-}
-```
+
+*Accepts no request, using the cookie header*
 
 ### Response
 ```
 {
-  status_code: 200
+  ??
 }
 ```
 
@@ -104,19 +99,16 @@ Possible status codes:
 
 ## Me
 
-Endpoint: `GET /api/auth/me`
+Endpoint: `GET /api/account/me`
 
 ### Request:
-```
-{
-  token: your_token
-}
-```
+
+*Accepts no request, using the cookie header*
 
 ### Response
 ```
 {
-  email: user@example.com
+  ??
 }
 ```
 
@@ -126,12 +118,11 @@ Possible status codes:
 
 ## Change Password
 
-Endpoint: `POST /api/auth/change-password`
+Endpoint: `POST /api/account/password`
 
 ### Request
 ```
 {
-  token: your_access_token,
   oldPassword: your_old_password,
   newPassword: your_new_password
 }
@@ -140,7 +131,7 @@ Endpoint: `POST /api/auth/change-password`
 ### Response
 ```
 {
-  status_code: 200
+  
 }
 ```
 
@@ -150,12 +141,11 @@ Possible status code:
 
 ## Change Email
 
-Endpoint: `POST /api/auth/change-email`
+Endpoint: `POST /api/account/email`
 
 ### Request
 ```
 {
-  token: your_access_token,
   email: new_email@gmail.com
 }
 ```
@@ -163,7 +153,7 @@ Endpoint: `POST /api/auth/change-email`
 ### Response
 ```
 {
-  status_code: 200
+  ??
 }
 ```
 
@@ -173,20 +163,16 @@ Possible status codes:
 
 ## Delete User
 
-Endpoint: `DELETE /api/auth/delete-user`
+Endpoint: `DELETE /api/account`
 
 ### Request
-```
-{
-  token : your_access_token,
-  password: your_password
-}
-```
+
+*Accepts no request, using the cookie header*
 
 ### Response
 ```
 {
-  status_code: 200
+  ??  
 }
 ```
 
@@ -201,15 +187,14 @@ Endpoint: `POST /api/auth/google`
 ### Request
 ```
 {
-  token: your_google_access_token
+  ??
 }
 ```
 
 ### Response
 ```
 {
-  status_code: 200,
-  token: your_access_token
+  ??
 }
 ```
 

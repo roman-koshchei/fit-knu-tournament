@@ -1,9 +1,7 @@
 ﻿@model AccountViewModel
-
 @{
-    ViewData["Title"] = "Welcome";
+    ViewData["Title"] = "Account";
 }
-
 
 <hgroup>
     <h1>Account</h1>
@@ -21,10 +19,11 @@
     </tr>
 </table>
 
-<a role="button" href="/Account/Password">Edit password</a>
-
-<a role="button" href="/Account/Email">Edit email</a>
+@if(!Model.WithExternal)
+{
+    <a role="button" href="/Account/Password">Edit password</a>
+    <a role="button" href="/Account/Email">Edit email</a>
+}
 
 <a role="button" class="secondary" href="/Account/Delete">Delete</a>
-
 <a role="button" class="secondary" href="/Account/Logout">Logout</a>

@@ -118,7 +118,7 @@ Possible status codes:
 
 ## Change Password
 
-Endpoint: `POST /api/account/password`
+Endpoint: `PUT /api/account/password`
 
 ### Request
 ```
@@ -141,7 +141,7 @@ Possible status code:
 
 ## Change Email
 
-Endpoint: `POST /api/account/email`
+Endpoint: `PUT /api/account/email`
 
 ### Request
 ```

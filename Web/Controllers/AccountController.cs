@@ -31,7 +31,7 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Delete()
     {
-        return View();
+        return View(/* Here should be model of user*/);
     }
 
     [HttpPost]

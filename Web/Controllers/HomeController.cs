@@ -1,4 +1,5 @@
-﻿using Data.Tables;
+﻿using Data;
+using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +13,22 @@ public class HomeController : Controller
 {
     private readonly UserManager<User> userManager;
     private readonly Jwt jwt;
+    private readonly Db db;
 
-    public HomeController(UserManager<User> userManager, Jwt jwt)
+    public HomeController(UserManager<User> userManager, Jwt jwt, Db db)
     {
         this.userManager = userManager;
         this.jwt = jwt;
+        this.db = db;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View(new LoginViewModel(null));
+
+        var uid = User.Uid();
+
+        var user = await db.Users.QueryOne(x => x.Id == uid);
+        return View(new LoginViewModel(IsRegistered: (user != null),Error: null));
     }
 
     public record LoginInput(string Email, string Password);
@@ -29,10 +36,10 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
-        if (user == null) return View("Index", new LoginViewModel("User with such email isn't found"));
+        if (user == null) return View("Index", new LoginViewModel(Error: "User with such email isn't found"));
 
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
-        if (!passwordCorrect) return View("Index", new LoginViewModel("Password is incorrect"));
+        if (!passwordCorrect) return View("Index", new LoginViewModel(Error: "Password is incorrect"));
 
         var token = jwt.Token(user.Id, user.Version);
         Response.AddAuthCookie(token);

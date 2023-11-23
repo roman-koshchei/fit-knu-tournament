@@ -105,7 +105,7 @@ app.UseSwaggerUI();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    //app.UseHsts();
 }
 
 app.UseCors(options =>

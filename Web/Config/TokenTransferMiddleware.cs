@@ -3,12 +3,10 @@
 public class TokenTransferMiddleware
 {
     private readonly RequestDelegate next;
-    private readonly ILogger logger;
 
-    public TokenTransferMiddleware(RequestDelegate next, ILogger logger)
+    public TokenTransferMiddleware(RequestDelegate next)
     {
         this.next = next;
-        this.logger = logger;
     }
 
     private const string key = "token";
@@ -16,7 +14,7 @@ public class TokenTransferMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var cookie = Cookie(context);
-        logger.LogWarning(cookie);
+        Console.WriteLine(cookie);
         if (cookie == null)
         {
             await next(context);
@@ -27,7 +25,7 @@ public class TokenTransferMiddleware
             context.Request.Headers.Remove("Authorization");
             context.Request.Headers.Add("Authorization", $"Bearer {cookie}");
 
-            logger.LogWarning($"Bearer {cookie}");
+            Console.WriteLine($"Bearer {cookie}");
         }
 
         await next(context);

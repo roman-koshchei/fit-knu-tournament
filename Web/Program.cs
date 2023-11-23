@@ -123,6 +123,7 @@ app.UseStatusCodePages(context =>
     var isApi = context.HttpContext.Request.Path.ToString().StartsWith("/api");
     if (!isApi && context.HttpContext.Response.StatusCode == 401)
     {
+        context.HttpContext.Response.Cookies.Delete("token");
         context.HttpContext.Response.Redirect("/");
     }
     return Task.CompletedTask;

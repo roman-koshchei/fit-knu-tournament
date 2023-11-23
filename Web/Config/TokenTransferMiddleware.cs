@@ -1,5 +1,8 @@
 ﻿namespace Web.Config;
 
+/// <summary>
+/// Middleware for transferring a token from a cookie to the Authorization header.
+/// </summary>
 public class TokenTransferMiddleware
 {
     private readonly RequestDelegate next;
@@ -9,17 +12,26 @@ public class TokenTransferMiddleware
         this.next = next;
     }
 
+    // Key for accessing the token from the cookie.
     private const string key = "token";
 
+    /// <summary>
+    /// Transfers the token from the cookie to the Authorization header.
+    /// </summary>
+    /// <param name="context">The current HTTP context.</param>
     public async Task InvokeAsync(HttpContext context)
     {
+        // Retrieve the token from the cookie.
         var cookie = Cookie(context);
+
+        // If no token is found, continue to the next middleware.
         if (cookie == null)
         {
             await next(context);
             return;
         }
 
+        // Set the Authorization header with the token.
         if (context.Request.Headers.Authorization.Count == 0)
         {
             context.Request.Headers.Authorization = new($"Bearer {cookie}");
@@ -27,16 +39,11 @@ public class TokenTransferMiddleware
             context.Request.Headers.Add("Authorization", $"Bearer {cookie}");
         }
 
+        // Continue processing the request.
         await next(context);
     }
 
-    //private static bool RequiresAuthentication(HttpContext context)
-    //{
-    //    var endpoint = context.GetEndpoint();
-    //    if (endpoint == null) return false;
-    //    var authorize = endpoint.Metadata.GetMetadata<AuthorizeAttribute>();
-    //    return authorize != null;
-    //}
+    // Retrieves the token from the cookie.
     private static string? Cookie(HttpContext context)
     {
         context.Request.Cookies.TryGetValue(key, out var value);
@@ -44,8 +51,16 @@ public class TokenTransferMiddleware
     }
 }
 
+/// <summary>
+/// Extension methods for integrating the TokenTransferMiddleware into the application's request processing pipeline.
+/// </summary>
 public static class TokenTransferMiddlewareExtensions
 {
+    /// <summary>
+    /// Adds the TokenTransferMiddleware to the middleware pipeline.
+    /// </summary>
+    /// <param name="builder">The application builder.</param>
+    /// <returns>The application builder with the TokenTransferMiddleware added.</returns>
     public static IApplicationBuilder UseTokenTransferMiddleware(this IApplicationBuilder builder)
     {
         return builder.UseMiddleware<TokenTransferMiddleware>();

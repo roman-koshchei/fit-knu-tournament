@@ -1,51 +1,66 @@
 ﻿using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
-namespace Web.Services;
-
-public class GoogleService
+namespace Web.Services
 {
-    private readonly SignInManager<User> signInManager;
-    private readonly UserManager<User> userManager;
-    private readonly Jwt jwt;
-
-    public GoogleService(SignInManager<User> signInManager, UserManager<User> userManager, Jwt jwt)
-    {
-        this.signInManager = signInManager;
-        this.userManager = userManager;
-        this.jwt = jwt;
-    }
-
     /// <summary>
-    /// Sign in user with external auth
+    /// Service for handling Google authentication-related operations.
     /// </summary>
-    /// <returns>Token if success, otherwise null</returns>
-    public async Task<string?> SignInUserWithExternal(User user, ExternalLoginInfo loginInfo)
+    public class GoogleService
     {
-        var signInResult = await signInManager.ExternalLoginSignInAsync(
-            loginInfo.LoginProvider, loginInfo.ProviderKey, isPersistent: false, bypassTwoFactor: true
-        );
-        if (!signInResult.Succeeded) return null;
+        private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
+        private readonly Jwt jwt;
 
-        return jwt.Token(user.Id, user.Version);
-    }
+        public GoogleService(SignInManager<User> signInManager, UserManager<User> userManager, Jwt jwt)
+        {
+            this.signInManager = signInManager;
+            this.userManager = userManager;
+            this.jwt = jwt;
+        }
 
-    /// <summary>
-    /// Create new user for external auth and new user token.
-    /// </summary>
-    /// <returns>Token if success, otherwise null</returns>
-    public async Task<string?> CreateUserWithExternal(string email, ExternalLoginInfo loginInfo)
-    {
-        var newUser = new User(email);
+        /// <summary>
+        /// Sign in user with external authentication.
+        /// </summary>
+        /// <returns>Token if success, otherwise null.</returns>
+        public async Task<string?> SignInUserWithExternal(User user, ExternalLoginInfo loginInfo)
+        {
+            var signInResult = await signInManager.ExternalLoginSignInAsync(
+                loginInfo.LoginProvider, loginInfo.ProviderKey, isPersistent: false, bypassTwoFactor: true
+            );
 
-        var result = await userManager.CreateAsync(newUser);
-        if (!result.Succeeded) return null;
+            // Return null if sign-in is not successful.
+            if (!signInResult.Succeeded) return null;
 
-        // Add the external login for the user
-        result = await userManager.AddLoginAsync(newUser, loginInfo);
-        if (!result.Succeeded) return null;
+            // Generate a JWT token for the authenticated user.
+            return jwt.Token(user.Id, user.Version);
+        }
 
-        return jwt.Token(newUser.Id, newUser.Version);
+        /// <summary>
+        /// Create a new user for external authentication and generate a new user token.
+        /// </summary>
+        /// <returns>Token if success, otherwise null.</returns>
+        public async Task<string?> CreateUserWithExternal(string email, ExternalLoginInfo loginInfo)
+        {
+            // Create a new user with the provided email.
+            var newUser = new User(email);
+
+            // Attempt to create the user in the identity system.
+            var result = await userManager.CreateAsync(newUser);
+
+            // Return null if user creation is not successful.
+            if (!result.Succeeded) return null;
+
+            // Add the external login for the user.
+            result = await userManager.AddLoginAsync(newUser, loginInfo);
+
+            // Return null if adding external login is not successful.
+            if (!result.Succeeded) return null;
+
+            // Generate a JWT token for the newly created user.
+            return jwt.Token(newUser.Id, newUser.Version);
+        }
     }
 }

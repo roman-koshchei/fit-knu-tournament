@@ -6,9 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Web.Config;
 using Web.Models;
+using System.Threading.Tasks;
 
 namespace Web.Controllers;
 
+/// <summary>
+/// Controller for handling home-related actions.
+/// </summary>
 public class HomeController : Controller
 {
     private readonly UserManager<User> userManager;
@@ -22,27 +26,45 @@ public class HomeController : Controller
         this.db = db;
     }
 
+    /// <summary>
+    /// Displays the home page with login information.
+    /// </summary>
     public IActionResult Index()
     {
         return View(new LoginViewModel(IsRegistered: User.HaveUid(), Error: null));
     }
 
+    /// <summary>
+    /// Represents the request body for the login action.
+    /// </summary>
     public record LoginInput(string Email, string Password);
 
+    /// <summary>
+    /// Handles user login and redirects to the account page on success.
+    /// </summary>
     public async Task<IActionResult> Login(LoginInput input)
     {
+        // Attempt to find the user by email.
         var user = await userManager.FindByEmailAsync(input.Email);
-        if (user == null) return View("Index", new LoginViewModel(false, Error: "User with such email isn't found"));
+        if (user == null)
+            return View("Index", new LoginViewModel(false, Error: "User with such email isn't found"));
 
+        // Check if the provided password is correct.
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
-        if (!passwordCorrect) return View("Index", new LoginViewModel(false, Error: "Password is incorrect"));
+        if (!passwordCorrect)
+            return View("Index", new LoginViewModel(false, Error: "Password is incorrect"));
 
+        // Generate a JWT token for the authenticated user.
         var token = jwt.Token(user.Id, user.Version);
         Response.AddAuthCookie(token);
 
+        // Redirect to the account page.
         return RedirectToAction("Index", "Account");
     }
 
+    /// <summary>
+    /// Displays the error page.
+    /// </summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

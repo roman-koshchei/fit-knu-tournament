@@ -130,7 +130,7 @@ app.UseStatusCodePages(context =>
     return Task.CompletedTask;
 });
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseTokenTransferMiddleware();

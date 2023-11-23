@@ -70,6 +70,13 @@ public class AccountController : Controller
         return View();
     }
 
+    [HttpGet]
+    [Authorize]
+    public IActionResult Password()
+    {
+        return View("Password", new ChangePasswordModel());
+    }
+   
     public record EmailBody(string Email);
 
     [HttpPost]

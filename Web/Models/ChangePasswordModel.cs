@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Web.Models;
-public class ChangePassword
+public class ChangePasswordModel
 {
     [Required(ErrorMessage = "The Old Password field is required")]
     [StringLength(18, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

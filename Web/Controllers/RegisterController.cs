@@ -67,12 +67,4 @@ public class RegisterController : Controller
 
         return Redirect("/Account");
     }
-
-    [HttpPost]
-    public async Task<IActionResult> LoginPost()
-    {
-        // Implement your login logic here
-        // This method should handle user login
-        return Ok();
-    }
 }

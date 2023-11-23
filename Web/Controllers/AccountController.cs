@@ -98,7 +98,7 @@ public class AccountController : Controller
     [Authorize]
     public IActionResult Password()
     {
-        return View("Password", new ChangePasswordModel());
+        return View("Password", new ChangePasswordViewModel(new List<string>()));
     }
 
     public record PasswordBody(string OldPassword, string NewPassword);
@@ -113,7 +113,9 @@ public class AccountController : Controller
         if (user == null) return Redirect("/");
 
         var result = await userManager.ChangePasswordAsync(user, body.OldPassword, body.NewPassword);
-        if (!result.Succeeded) return Redirect("/Account");
+        if (!result.Succeeded) return View("Password",
+            new ChangePasswordViewModel(result.Errors.Select(x => x.Description))
+        );
 
         user.Version += 1;
         var saved = await db.Save();

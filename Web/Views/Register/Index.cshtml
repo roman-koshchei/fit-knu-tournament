@@ -9,24 +9,63 @@
 </hgroup>
 
 <form method="post" asp-action="Register">
-    <label asp-for="Email">Email</label>
-    <input asp-for="Email" placeholder="Enter Email"/>
-        
-    <label asp-for="Password"><b>Password</b></label>
-    <input asp-for="Password" placeholder="Enter Password"/>
-        
-    <label asp-for="ConfirmPassword"><b>Confirm Password</b></label>
-    <input asp-for="ConfirmPassword" placeholder="Confirm Password"/>
-        
-    @if (string.IsNullOrEmpty(ViewData["PasswordError"] as string))
-    {
-        <div asp-validation-summary="All" class="text-danger"></div>
-    }
-    
-    <button type="submit">Register</button>
+    <div class="container">
+        <h1 style="text-align: center;">Registration</h1>
+        <p style="text-align: center;">Please fill in this form to create an account</p>
+
+            <label asp-for="Email"><b>Email</b></label>
+            <input asp-for="Email" class="form-control" placeholder="Enter Email" />
+                <span asp-validation-for="Email"> </span>
+           
+            <label asp-for="Password"><b>Password</b></label>
+            <input asp-for="Password" class="form-control" placeholder="Enter Password" />
+                <span asp-validation-for ="Password"> </span>
+
+            <label asp-for="ConfirmPassword"><b>Confirm Password</b></label>
+            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                <span asp-validation-for="ConfirmPassword"> </span>
+
+            <div id="errorsList" asp-validation-summary="All" ></div>
+            
+    </div>
+
+    <button type="submit" class="registerbtn">Register</button>
+
+    <div class="container signin">
+        <p>Already have an account? <a href="/home">Login</a>.</p>
+    </div>
 </form>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const errorSpans = document.querySelectorAll("span[data-valmsg-for]");
 
-<div class="container signin">
-    <p>Already have an account? <a href="/">Login</a></p>
-</div>
+        errorSpans.forEach(function (errorSpan) {
+            const errorMessage = errorSpan.textContent.trim();
+
+            if (errorMessage !== "") {
+                const markTag = document.createElement("mark");
+                markTag.textContent = errorMessage;
+
+                // Replace the span with the mark inside the same parent (li) tag
+                errorSpan.parentNode.replaceChild(markTag, errorSpan);
+            }
+        });
+
+        const errorsList = document.getElementById("errorsList");
+        const errorItems = errorsList.querySelectorAll("ul li");
+
+        if (errorItems.length > 1) {
+            errorItems.forEach(function (errorItem) {
+                // Wrap each li's text content with a mark tag
+                const markTag = document.createElement("mark");
+                markTag.textContent = errorItem.textContent.trim();
+
+                // Replace the li's text content with the mark
+                errorItem.textContent = "";
+                errorItem.appendChild(markTag);
+            });
+        }
+    });
+</script>
+

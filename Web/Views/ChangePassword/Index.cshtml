@@ -1,0 +1,35 @@
+﻿@page
+@model Web.Models.ChangePassword
+@{
+}
+@* 
+
+<form method="post" asp-action="ChangePassword">
+
+    <div class="container">
+        <h1 style="text-align: center;">Registretion</h1>
+        <p style="text-align: center;">Please fill in this form to create an account</p>
+
+        <label asp-for="Email"><b>Email</b></label>
+        <input asp-for="Email" class="form-control" placeholder="Enter Email" />
+
+
+        <label asp-for="Password"><b>Password</b></label>
+        <input asp-for="Password" class="form-control" placeholder="Enter Password" />
+
+
+        <label asp-for="ConfirmPassword"><b>Confirm Password</b></label>
+        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+
+        @if (string.IsNullOrEmpty(ViewData["PasswordError"] as string))
+        {
+            <div asp-validation-summary="All" class="text-danger"></div>
+        }
+    </div>
+
+    <button type="submit" class="registerbtn">Register</button>
+
+    <div class="container signin">
+        <p>Already have an account? <a href="/home">Logining</a>.</p>
+    </div>
+</form> *@

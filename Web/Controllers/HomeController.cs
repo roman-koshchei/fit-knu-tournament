@@ -22,7 +22,7 @@ public class HomeController : Controller
         this.db = db;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         return View(new LoginViewModel(IsRegistered: User.HaveUid(), Error: null));
     }

@@ -24,11 +24,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-
-        var uid = User.Uid();
-
-        var user = await db.Users.QueryOne(x => x.Id == uid);
-        return View(new LoginViewModel(IsRegistered: (user != null),Error: null));
+        return View(new LoginViewModel(IsRegistered: User.HaveUid(), Error: null));
     }
 
     public record LoginInput(string Email, string Password);
@@ -36,10 +32,10 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
-        if (user == null) return View("Index", new LoginViewModel(Error: "User with such email isn't found"));
+        if (user == null) return View("Index", new LoginViewModel(false, Error: "User with such email isn't found"));
 
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
-        if (!passwordCorrect) return View("Index", new LoginViewModel(Error: "Password is incorrect"));
+        if (!passwordCorrect) return View("Index", new LoginViewModel(false, Error: "Password is incorrect"));
 
         var token = jwt.Token(user.Id, user.Version);
         Response.AddAuthCookie(token);

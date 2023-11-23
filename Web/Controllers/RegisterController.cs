@@ -21,14 +21,12 @@ public class RegisterController : Controller
         this.db = db;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var uid = User.Uid();
+        var haveUid = User.HaveUid();
+        if (haveUid) return Redirect("Account");
 
-        var user = await db.Users.QueryOne(x => x.Id == uid);
-        if (user == null) return View(new RegisterViewModel());
-        return Redirect("Account");
-
+        return View(new RegisterViewModel());
     }
 
     [HttpPost]

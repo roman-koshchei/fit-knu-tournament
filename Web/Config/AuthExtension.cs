@@ -16,6 +16,11 @@ public static class AuthExtension
         return principal.FindFirst(Jwt.Uid)!.Value;
     }
 
+    public static bool HaveUid(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirst(Jwt.Uid) != null;
+    }
+
     public static void AddAuthCookie(this HttpResponse response, string token)
     {
         response.Cookies.Append("token", token, new()

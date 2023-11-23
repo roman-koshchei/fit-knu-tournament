@@ -18,7 +18,7 @@
         <mark>@Model.Error</mark>
     </p>
 }
-@if(Model.IsRegistered == null)
+@if(!Model.IsRegistered)
 {
 
     <form method="post" asp-action="Login">

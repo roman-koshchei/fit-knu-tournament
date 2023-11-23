@@ -51,7 +51,7 @@ public class GoogleController : Controller
         }
 
         var token = await googleService.CreateUserWithExternal(email, info);
-        if (token == null) return Problem("Error creating a new user.");
+        if (token == null) return Redirect("/"); // Problem("Error creating a new user.");
 
         Response.AddAuthCookie(token);
         return Redirect("/Account");

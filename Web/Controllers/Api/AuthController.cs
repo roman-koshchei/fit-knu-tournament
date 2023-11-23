@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
 
     public record LoginModel(string Email, string Password);
 
-    [HttpGet("login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var user = await userManager.FindByEmailAsync(model.Email);

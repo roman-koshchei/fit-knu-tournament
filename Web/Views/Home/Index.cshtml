@@ -9,24 +9,40 @@
     <h2>Authentication service made by QuasarSoft team for FIT KNU Tournament 2023</h2>
 </hgroup>
 
+
+
+
 @if(Model.Error != null)
 {
     <p>
         <mark>@Model.Error</mark>
     </p>
 }
+@if(!Model.IsRegistered)
+{
 
-<form method="post" asp-action="Login">
-    <label for="email">Email</label>
-    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+    <form method="post" asp-action="Login">
+        <label for="email">Email</label>
+        <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
-    <label for="password">Password</label>
-    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+        <label for="password">Password</label>
+        <input type="password" placeholder="Enter Password" name="password" id="password" required>
 
-    <button type="submit" class="registerbtn">Login</button>
-</form>
+        <button type="submit" class="registerbtn">Login</button>
+        @* googl.com сменить на другое что то *@
+
+        <a style="display: block;" role="button" class="contrast" href="/Google">
+            Sign in with google
+        </a>
+    </form>
 
 
-<div class="container signin">
-<p>You havent account? <a href="/logining">Register</a></p>
-</div>
+    <div class="container signin">
+        <p>Don't have an account yet? <a href="/Register">Register</a></p>
+    </div>
+}
+else
+{
+    <p>You already authenticated</p>
+    <a href="@Url.Action("Index", "Account")">Go to account page</a>
+}

@@ -1,0 +1,20 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<hgroup>
+    <h1>Edit your email</h1>
+    <h2>Fill the form to change your email</h2>
+</hgroup>
+
+<form method="post" asp-action="ChangeEmail">
+    <label for="email">New email</label>
+    <input type="email" placeholder="Enter new email" name="email" id="email" required>
+@* 
+    <label for="password">Password</label>
+    <input type="password" placeholder="Enter password" name="password" id="password" required>
+ *@
+    <button type="submit">Change</button>
+</form>

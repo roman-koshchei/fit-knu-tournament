@@ -1,4 +1,5 @@
-﻿using Data.Tables;
+﻿using Data;
+using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,27 +13,18 @@ public class HomeController : Controller
 {
     private readonly UserManager<User> userManager;
     private readonly Jwt jwt;
+    private readonly Db db;
 
-    public HomeController(UserManager<User> userManager, Jwt jwt)
+    public HomeController(UserManager<User> userManager, Jwt jwt, Db db)
     {
         this.userManager = userManager;
         this.jwt = jwt;
+        this.db = db;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View(new LoginViewModel(null));
-    }
-
-    [NonAction]
-    public void AddAuthCookie(string token)
-    {
-        Response.Cookies.Append("token", token, new()
-        {
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTimeOffset.Now.AddDays(30)
-        });
+        return View(new LoginViewModel(IsRegistered: User.HaveUid(), Error: null));
     }
 
     public record LoginInput(string Email, string Password);
@@ -40,21 +32,15 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(LoginInput input)
     {
         var user = await userManager.FindByEmailAsync(input.Email);
-        if (user == null) return Redirect("/not-found");
+        if (user == null) return View("Index", new LoginViewModel(false, Error: "User with such email isn't found"));
 
         var passwordCorrect = await userManager.CheckPasswordAsync(user, input.Password);
-        if (!passwordCorrect) return View("Index", new LoginViewModel("Password is incorrect"));
+        if (!passwordCorrect) return View("Index", new LoginViewModel(false, Error: "Password is incorrect"));
 
         var token = jwt.Token(user.Id, user.Version);
-        AddAuthCookie(token);
+        Response.AddAuthCookie(token);
 
         return RedirectToAction("Index", "Account");
-    }
-
-    [HttpGet("/not-found")]
-    public IActionResult NotFoundPage()
-    {
-        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

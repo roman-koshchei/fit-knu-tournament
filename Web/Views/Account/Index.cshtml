@@ -1,15 +1,30 @@
-﻿
+﻿@model AccountViewModel
 
 @{
     ViewData["Title"] = "Welcome";
 }
 
 
-<h1>Account</h1>
+<hgroup>
+    <h1>Account</h1>
+    <h2>Here you can see your account information and manage it.</h2>
+</hgroup>
 
 <table>
     <tr>
+        <th>Id</th>
+        <td>@Model.Id</td>
+    </tr>
+    <tr>
         <th>Email</th>
-        <td></td>
+        <td>@(Model.Email ?? "")</td>
     </tr>
 </table>
+
+<a role="button" href="/Account/Password">Edit password</a>
+
+<a role="button" href="/Account/Email">Edit email</a>
+
+<a role="button" class="secondary" href="/Account/Delete">Delete</a>
+
+<a role="button" class="secondary" href="/Account/Logout">Logout</a>

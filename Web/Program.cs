@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Web.Config;
+using Web.Services;
 
 Env.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
@@ -92,6 +93,8 @@ builder.Services
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
     });
 
+builder.Services.AddScoped<GoogleService>();
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -115,13 +118,25 @@ app.UseCors(options =>
 
 app.UseRouting();
 
+app.UseStatusCodePages(context =>
+{
+    var isApi = context.HttpContext.Request.Path.ToString().StartsWith("/api");
+    if (!isApi && context.HttpContext.Response.StatusCode == 401)
+    {
+        context.HttpContext.Response.Redirect("/");
+    }
+    return Task.CompletedTask;
+});
+
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseAuthorization();
+app.UseTokenTransferMiddleware();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseUserVersionMiddleware();
+app.UseCustomAuthMiddleware();
 
 app.MapControllerRoute(
     name: "default",

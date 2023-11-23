@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/pico.min.css" asp-append-version="true" />
 </head>
 <body class="container">
-    <nav>
+    <nav style="flex-wrap:wrap;">
         <ul>
             <li>
                 <a asp-controller="Home" asp-action="Index">QuasarSoft Auth</a>
@@ -16,13 +16,13 @@
         </ul>
         <ul>
             <li>
-                <a href="https://github.com/roman-koshchei/fit-knu-tournament">GitHub</a>
+                <a href="https://github.com/roman-koshchei/fit-knu-tournament" target="_blank">GitHub</a>
             </li>
             <li>
                 <a href="/swagger">Swagger</a>
             </li>
             <li>
-                <a href="/register">Sign up</a>
+                <a href="/Account">Account</a>
             </li>
         </ul>
     </nav>
@@ -34,7 +34,11 @@
     <footer>
         &copy; @(DateTime.Now.Year) - QuasarSoft
     </footer>
-
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

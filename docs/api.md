@@ -11,11 +11,11 @@
 
 ## Login
 
-Url: `/api/auth/login`
+Url: `POST` `/api/auth/login`
 
 Body:
 
-```js
+```
 {
   email: string
   password: string
@@ -30,7 +30,7 @@ Status codes:
 
 200 Response:
 
-```js
+```
 {
   token: string
   email: string

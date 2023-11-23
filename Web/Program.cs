@@ -128,6 +128,7 @@ app.UseStatusCodePages(context =>
     }
     return Task.CompletedTask;
 });
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

@@ -2,6 +2,7 @@
 using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Web.Config;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -15,16 +16,6 @@ public class RegisterController : Controller
     {
         _userManager = userManager;
         _jwt = jwtService;
-    }
-
-    public void AddAuthCookie(string token)
-    {
-        Response.Cookies.Append("token", token, new()
-        {
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTimeOffset.Now.AddDays(30)
-        });
     }
 
     public IActionResult Index()
@@ -66,9 +57,9 @@ public class RegisterController : Controller
             // User created successfully, generate authentication token
             var token = _jwt.Token(newUser.Id, newUser.Version);
 
-            AddAuthCookie(token);
+            Response.AddAuthCookie(token);
 
-            return View("Success");
+            return Redirect("/Account");
         }
         return View("Index", new RegisterViewModel());
     }

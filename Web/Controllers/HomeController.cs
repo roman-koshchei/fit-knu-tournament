@@ -3,6 +3,7 @@ using Lib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Web.Config;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -23,17 +24,6 @@ public class HomeController : Controller
         return View(new LoginViewModel(null));
     }
 
-    [NonAction]
-    public void AddAuthCookie(string token)
-    {
-        Response.Cookies.Append("token", token, new()
-        {
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTimeOffset.Now.AddDays(30)
-        });
-    }
-
     public record LoginInput(string Email, string Password);
 
     public async Task<IActionResult> Login(LoginInput input)
@@ -45,7 +35,7 @@ public class HomeController : Controller
         if (!passwordCorrect) return View("Index", new LoginViewModel("Password is incorrect"));
 
         var token = jwt.Token(user.Id, user.Version);
-        AddAuthCookie(token);
+        Response.AddAuthCookie(token);
 
         return RedirectToAction("Index", "Account");
     }

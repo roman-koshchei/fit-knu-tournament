@@ -70,17 +70,6 @@ public class AccountController : Controller
         return View();
     }
 
-    [NonAction]
-    public void AddAuthCookie(string token)
-    {
-        Response.Cookies.Append("token", token, new()
-        {
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTimeOffset.Now.AddDays(30)
-        });
-    }
-
     public record EmailBody(string Email);
 
     [HttpPost]
@@ -100,7 +89,7 @@ public class AccountController : Controller
         if (!saved) return Redirect("/Account");
 
         var token = jwt.Token(user.Id, user.Version);
-        AddAuthCookie(token);
+        Response.AddAuthCookie(token);
 
         return Redirect("/Account");
     }

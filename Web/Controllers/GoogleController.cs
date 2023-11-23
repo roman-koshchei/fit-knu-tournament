@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Configuration;
-using static Web.Controllers.Api.GoogleController;
 using System.Security.Claims;
-using Web.Services;
 using Web.Config;
+using Web.Services;
 
 namespace Web.Controllers;
 

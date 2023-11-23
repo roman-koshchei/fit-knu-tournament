@@ -1,7 +1,6 @@
 ﻿using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Services;
 

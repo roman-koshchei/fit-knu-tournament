@@ -11,7 +11,7 @@ Authentication service made by QuasarSoft team for FIT KNU Tournament 2023
 - [x] Change password: POST token + old password + new password + change user version +1
 - [x] Change email: POST token + email + change user version + 1
 - [x] Delete user: DELETE token + password
-- [ ] Google
+- [x] Google
 
 ## UI tasks
 

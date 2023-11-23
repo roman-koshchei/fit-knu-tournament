@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Web.Models;
+
 public class ChangePassword
 {
     [Required(ErrorMessage = "The Old Password field is required")]

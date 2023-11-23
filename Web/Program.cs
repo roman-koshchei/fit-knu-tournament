@@ -86,13 +86,22 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.JWT_SECRET)),
         };
     })
-    .AddCookie()
     .AddGoogle(options =>
     {
-        options.SignInScheme = IdentityConstants.ExternalScheme;
+        //options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
     });
+
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    // options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 builder.Services.AddScoped<GoogleService>();
 

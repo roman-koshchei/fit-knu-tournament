@@ -26,11 +26,10 @@ public class AccountController : Controller
     {
         var uid = User.Uid();
 
-        var user = await db.Users
-            .Select(x => new AccountViewModel(x.Id, x.Email))
-            .QueryOne(x => x.Id == uid);
+        var user = await db.Users.QueryOne(x => x.Id == uid);
+        if (user == null) return RedirectToAction("NotFoundPage", "Home");
 
-        return View(user);
+        return View(new AccountViewModel(user.Id, user.Email));
     }
 
     [HttpGet]
@@ -46,7 +45,7 @@ public class AccountController : Controller
         var uid = User.Uid();
 
         var user = await db.Users.QueryOne(x => x.Id == uid);
-        if(user == null) return Redirect("/");
+        if (user == null) return Redirect("/");
 
         var result = await userManager.DeleteAsync(user);
         if (result.Succeeded) return Redirect("/");

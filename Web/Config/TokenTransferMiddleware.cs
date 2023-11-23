@@ -27,7 +27,8 @@ public class TokenTransferMiddleware
 
         if (context.Request.Headers.Authorization.Count == 0)
         {
-            context.Request.Headers.Authorization = new($"Bearer {cookie}");
+            context.Request.Headers.Remove("Authorization");
+            context.Request.Headers.Add("Authorization", $"Bearer {cookie}");
         }
 
         await next(context);

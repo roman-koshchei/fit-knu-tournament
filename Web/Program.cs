@@ -86,6 +86,7 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.JWT_SECRET)),
         };
     })
+    .AddCookie()
     .AddGoogle(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;

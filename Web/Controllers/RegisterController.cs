@@ -72,9 +72,7 @@ public class RegisterController : Controller
 
             return View("Success");
         }
-
-        // If ModelState is not valid, return bad request with ModelState errors
-        return BadRequest(ModelState);
+        return View("Index", new RegisterViewModel());
     }
 
     [HttpPost]

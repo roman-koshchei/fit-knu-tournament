@@ -19,7 +19,7 @@ Authentication service made by QuasarSoft team for FIT KNU Tournament 2023
 - [x] Registartion page
 - [x] Account info
 - [x] Confirm account delete page
-- [ ] Change password page
+- [x] Change password page
 - [x] Change email page
 - [ ] Google
 

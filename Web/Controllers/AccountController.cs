@@ -6,9 +6,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Config;
 using Web.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Web.Controllers;
 
+/// <summary>
+/// Controller for handling user account-related actions.
+/// </summary>
 public class AccountController : Controller
 {
     private readonly Db db;
@@ -22,6 +28,9 @@ public class AccountController : Controller
         this.jwt = jwt;
     }
 
+    /// <summary>
+    /// Displays the account details for the authenticated user.
+    /// </summary>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> Index()
@@ -34,12 +43,18 @@ public class AccountController : Controller
         return View(new AccountViewModel(user.Id, user.Email, user.PasswordHash == null));
     }
 
+    /// <summary>
+    /// Displays the confirmation view for account deletion.
+    /// </summary>
     [HttpGet]
     public IActionResult Delete()
     {
         return View(new DeleteViewModel(new List<string>()));
     }
 
+    /// <summary>
+    /// Confirms and processes the deletion of the authenticated user's account.
+    /// </summary>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> ConfirmDelete()
@@ -59,6 +74,9 @@ public class AccountController : Controller
         return View("Delete", new DeleteViewModel(result.Errors.Select(x => x.Description)));
     }
 
+    /// <summary>
+    /// Logs out the authenticated user and redirects to the home page.
+    /// </summary>
     [HttpGet]
     [Authorize]
     public IActionResult Logout()
@@ -67,6 +85,9 @@ public class AccountController : Controller
         return Redirect("/");
     }
 
+    /// <summary>
+    /// Displays the view for changing the user's email.
+    /// </summary>
     [HttpGet]
     [Authorize]
     public IActionResult Email()
@@ -74,8 +95,14 @@ public class AccountController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Represents the request body for changing the user's email.
+    /// </summary>
     public record EmailBody(string Email);
 
+    /// <summary>
+    /// Changes the user's email and updates the authentication token.
+    /// </summary>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> ChangeEmail(EmailBody body)
@@ -98,6 +125,9 @@ public class AccountController : Controller
         return Redirect("/Account");
     }
 
+    /// <summary>
+    /// Displays the view for changing the user's password.
+    /// </summary>
     [HttpGet]
     [Authorize]
     public IActionResult Password()
@@ -105,8 +135,14 @@ public class AccountController : Controller
         return View("Password", new ChangePasswordViewModel(new List<string>()));
     }
 
+    /// <summary>
+    /// Represents the request body for changing the user's password.
+    /// </summary>
     public record PasswordBody(string OldPassword, string NewPassword);
 
+    /// <summary>
+    /// Changes the user's password and updates the authentication token.
+    /// </summary>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> ChangePassword(PasswordBody body)

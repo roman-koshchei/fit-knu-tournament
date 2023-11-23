@@ -6,9 +6,9 @@ using Microsoft.Extensions.Primitives;
 namespace Web.Config;
 
 /// <summary>
-/// Seach for token in Header and Cookie.
-/// Check version of User.
-/// If API return 401, otherwise redirect to Home/Login page
+/// Middleware for custom authentication logic.
+/// Searches for the token in the Header and Cookie, checks the version of the User.
+/// If the API returns 401, otherwise redirects to the Home/Login page.
 /// </summary>
 public class CustomAuthMiddleware
 {
@@ -20,6 +20,7 @@ public class CustomAuthMiddleware
     {
         this.next = next;
 
+        // Dependency injection of database and JWT services.
         var scope = provider.CreateScope();
         db = scope.ServiceProvider.GetRequiredService<Db>();
         jwt = scope.ServiceProvider.GetRequiredService<Jwt>();
@@ -27,6 +28,7 @@ public class CustomAuthMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        // Check if authentication is required for the current context.
         var requiresAuthentication = RequiresAuthentication(context);
         if (!requiresAuthentication)
         {
@@ -34,8 +36,10 @@ public class CustomAuthMiddleware
             return;
         }
 
+        // Determine if the request is for an API.
         var isApi = context.Request.Path.ToString().StartsWith("/api");
 
+        // Extract user ID and version from the context's user claims.
         var uid = context.User.Uid();
         var versionParsed = int.TryParse(context.User.FindFirst(Jwt.Version)?.Value, out var version);
         if (!versionParsed)
@@ -44,6 +48,7 @@ public class CustomAuthMiddleware
             return;
         }
 
+        // Check if the user's version is valid.
         var versionOk = await db.Users.Have(x => x.Id == uid && x.Version == version);
         if (!versionOk)
         {
@@ -51,9 +56,11 @@ public class CustomAuthMiddleware
             return;
         }
 
+        // Continue processing the request.
         await next(context);
     }
 
+    // Handles unauthorized access by setting the response status code or redirecting.
     private static void Unauthorized(HttpContext context, bool isApi)
     {
         if (isApi)
@@ -66,6 +73,7 @@ public class CustomAuthMiddleware
         }
     }
 
+    // Checks if authentication is required for the current request endpoint.
     private static bool RequiresAuthentication(HttpContext context)
     {
         var endpoint = context.GetEndpoint();
@@ -75,6 +83,7 @@ public class CustomAuthMiddleware
         return authorize != null;
     }
 
+    // Retrieves the token from the request headers or cookies.
     private static string? GetToken(HttpRequest request)
     {
         if (StringValues.IsNullOrEmpty(request.Headers.Authorization))
@@ -93,6 +102,9 @@ public class CustomAuthMiddleware
     }
 }
 
+/// <summary>
+/// Extension methods for integrating the CustomAuthMiddleware into the application's request processing pipeline.
+/// </summary>
 public static class CustomAuthMiddlewareExtensions
 {
     public static IApplicationBuilder UseCustomAuthMiddleware(this IApplicationBuilder builder)

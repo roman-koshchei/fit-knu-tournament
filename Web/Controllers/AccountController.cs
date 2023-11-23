@@ -50,7 +50,11 @@ public class AccountController : Controller
         if (user == null) return Redirect("/");
 
         var result = await userManager.DeleteAsync(user);
-        if (result.Succeeded) return Redirect("/");
+        if (result.Succeeded)
+        {
+            Response.Cookies.Delete("token");
+            return Redirect("/");
+        }
 
         return View("Delete", new DeleteViewModel(result.Errors.Select(x => x.Description)));
     }

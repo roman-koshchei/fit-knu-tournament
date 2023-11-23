@@ -5,6 +5,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace Web.Config;
 
+/// <summary>
+/// Seach for token in Header and Cookie.
+/// Check version of User.
+/// If API return 401, otherwise redirect to Home/Login page
+/// </summary>
 public class CustomAuthMiddleware
 {
     private readonly RequestDelegate next;
@@ -31,28 +36,8 @@ public class CustomAuthMiddleware
 
         var isApi = context.Request.Path.ToString().StartsWith("/api");
 
-        var token = GetToken(context.Request);
-        if (token == null)
-        {
-            Unauthorized(context, isApi);
-            return;
-        }
-
-        var princimal = jwt.Validate(token);
-        if (princimal == null)
-        {
-            Unauthorized(context, isApi);
-            return;
-        }
-
-        var uid = princimal.FindFirst(Jwt.Uid)?.Value;
-        if (uid == null)
-        {
-            Unauthorized(context, isApi);
-            return;
-        }
-
-        var versionParsed = int.TryParse(princimal.FindFirst(Jwt.Version)?.Value, out var version);
+        var uid = context.User.Uid();
+        var versionParsed = int.TryParse(context.User.FindFirst(Jwt.Version)?.Value, out var version);
         if (!versionParsed)
         {
             Unauthorized(context, isApi);

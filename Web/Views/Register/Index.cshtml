@@ -12,20 +12,20 @@
     <div class="container">
         <h1 style="text-align: center;">Registration</h1>
         <p style="text-align: center;">Please fill in this form to create an account</p>
-
+        <div style="margin-bottom: 20px">
             <label asp-for="Email"><b>Email</b></label>
             <input asp-for="Email" class="form-control" placeholder="Enter Email" />
-                <span asp-validation-for="Email"> </span>
-           
+            <span asp-validation-for="Email"> </span>
+
             <label asp-for="Password"><b>Password</b></label>
             <input asp-for="Password" class="form-control" placeholder="Enter Password" />
-                <span asp-validation-for ="Password"> </span>
+            <span asp-validation-for="Password"> </span>
 
             <label asp-for="ConfirmPassword"><b>Confirm Password</b></label>
             <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
-                <span asp-validation-for="ConfirmPassword"> </span>
-
-            <div id="errorsList" asp-validation-summary="All" ></div>
+            <span asp-validation-for="ConfirmPassword"> </span>
+        </div>
+            <div class="mt-5" id="errorsList" asp-validation-summary="All" ></div>
             
     </div>
 
@@ -36,36 +36,7 @@
     </div>
 </form>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const errorSpans = document.querySelectorAll("span[data-valmsg-for]");
 
-        errorSpans.forEach(function (errorSpan) {
-            const errorMessage = errorSpan.textContent.trim();
 
-            if (errorMessage !== "") {
-                const markTag = document.createElement("mark");
-                markTag.textContent = errorMessage;
-
-                // Replace the span with the mark inside the same parent (li) tag
-                errorSpan.parentNode.replaceChild(markTag, errorSpan);
-            }
-        });
-
-        const errorsList = document.getElementById("errorsList");
-        const errorItems = errorsList.querySelectorAll("ul li");
-
-        if (errorItems.length > 1) {
-            errorItems.forEach(function (errorItem) {
-                // Wrap each li's text content with a mark tag
-                const markTag = document.createElement("mark");
-                markTag.textContent = errorItem.textContent.trim();
-
-                // Replace the li's text content with the mark
-                errorItem.textContent = "";
-                errorItem.appendChild(markTag);
-            });
-        }
-    });
-</script>
+<partial name="~/Views/Shared/_WrappingMarkOnErrorPartial.cshtml" />
 

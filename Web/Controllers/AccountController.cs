@@ -1,5 +1,6 @@
 ﻿using Data;
 using Data.Tables;
+using Lib;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ public class AccountController : Controller
 {
     private readonly Db db;
     private readonly UserManager<User> userManager;
+    private readonly Jwt jwt;
 
-    public AccountController(Db db, UserManager<User> userManager)
+    public AccountController(Db db, UserManager<User> userManager, Jwt jwt)
     {
         this.db = db;
         this.userManager = userManager;
+        this.jwt = jwt;
     }
 
     [HttpGet]
@@ -58,5 +61,47 @@ public class AccountController : Controller
     {
         Response.Cookies.Delete("token");
         return Redirect("/");
+    }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult Email()
+    {
+        return View();
+    }
+
+    [NonAction]
+    public void AddAuthCookie(string token)
+    {
+        Response.Cookies.Append("token", token, new()
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTimeOffset.Now.AddDays(30)
+        });
+    }
+
+    public record EmailBody(string Email);
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> ChangeEmail(EmailBody body)
+    {
+        var uid = User.Uid();
+
+        var user = await db.Users.QueryOne(x => x.Id == uid);
+        if (user == null) return Redirect("/");
+
+        user.Email = body.Email;
+        user.NormalizedEmail = body.Email.ToUpper();
+        user.Version += 1;
+
+        var saved = await db.Save();
+        if (!saved) return Redirect("/Account");
+
+        var token = jwt.Token(user.Id, user.Version);
+        AddAuthCookie(token);
+
+        return Redirect("/Account");
     }
 }

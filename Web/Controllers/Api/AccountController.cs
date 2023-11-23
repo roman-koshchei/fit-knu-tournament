@@ -20,7 +20,6 @@ public class AccountController : ControllerBase
         this.userManager = userManager;
     }
 
-    // id will be removed and taken from token
     public record EmailBody(string Email);
 
     [HttpPut("email")]

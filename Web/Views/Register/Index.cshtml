@@ -20,9 +20,8 @@
     <label asp-for="ConfirmPassword">Confirm Password</label>
     <input asp-for="ConfirmPassword" placeholder="Confirm Password" />
     <span asp-validation-for="ConfirmPassword"> </span>
-        
-    <div class="mt-5" id="errorsList" asp-validation-summary="All" ></div>
     
+    <div class="mt-5" id="errorsList" asp-validation-summary="ModelOnly"></div>
     <button type="submit">Register</button>
 
 </form>

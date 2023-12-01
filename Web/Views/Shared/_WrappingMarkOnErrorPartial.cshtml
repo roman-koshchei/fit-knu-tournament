@@ -14,20 +14,5 @@
             }
         });
 
-        const errorsList = document.getElementById("errorsList");
-        const errorItems = errorsList.querySelectorAll("ul li");
-
-        if (errorItems.length > 1) {
-            errorItems.forEach(function (errorItem) {
-                // Wrap each li's text content with a mark tag
-                const markTag = document.createElement("mark");
-                markTag.textContent = errorItem.textContent.trim();
-
-                // Replace the li's text content with the mark
-                errorItem.textContent = "";
-                errorItem.appendChild(markTag);
-            });
-        }
-
     });
 </script>

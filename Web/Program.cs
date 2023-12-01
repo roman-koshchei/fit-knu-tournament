@@ -1,4 +1,3 @@
-// Load env vars from .env
 using Data;
 using Data.Tables;
 using Lib;
@@ -13,6 +12,7 @@ using System.Text;
 using Web.Config;
 using Web.Services;
 
+// Load env vars from .env
 Env.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);

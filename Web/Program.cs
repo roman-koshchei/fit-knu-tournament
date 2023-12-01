@@ -4,6 +4,7 @@ using Data.Tables;
 using Lib;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.All;
+});
+
+builder.Services.AddAntiforgery(options =>
+{
+    // Set Cookie properties using CookieBuilder properties†.
+    options.FormFieldName = "FitTournament";
+    options.HeaderName = "X-FitTournament";
+    options.SuppressXFrameOptionsHeader = false;
+});
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -88,10 +101,21 @@ builder.Services
     })
     .AddGoogle(options =>
     {
-        options.SignInScheme = IdentityConstants.ExternalScheme;
+        //options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = Secrets.GOOGLE_CLIENT_ID;
         options.ClientSecret = Secrets.GOOGLE_CLIENT_SECRET;
     });
+
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 builder.Services.AddScoped<GoogleService>();
 
@@ -100,11 +124,13 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseForwardedHeaders();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    //app.UseHsts();
 }
 
 app.UseCors(options =>

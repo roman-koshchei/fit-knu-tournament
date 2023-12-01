@@ -72,7 +72,7 @@ public class RegisterController : Controller
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-            return StatusCode(500, ModelState);
+            return View("Index", new RegisterViewModel());
         }
 
         // User created successfully, generate authentication token.

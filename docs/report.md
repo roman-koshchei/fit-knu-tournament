@@ -51,7 +51,13 @@
 
 ![assets/main.png](../assets/main.png)
 
-![Alt text](image-1.png)
+![assets/account.png](../assets/account.png)
+
+![assets/password.png](../assets/password.png)
+
+![assets/email.png](../assets/email.png)
+
+![assets/delete.png](../assets/delete.png)
 
 Swagger сторінка:
 
